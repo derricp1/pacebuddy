@@ -3,15 +3,12 @@ package com.example.pacebuddy;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -19,15 +16,17 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	final String DELAY = null;
-	final String PERIOD = null;
-	final String MAX_SPEED = null;
-	final String MIN_SPEED = null;
+	static String DELAY = null;
+	static String PERIOD = null;
+	static String MAX_SPEED = null;
+	static String MIN_SPEED = null;
 	
 	int delay;
 	int period;
 	int max_speed;
 	int min_speed;
+
+	int QUIT_ALL = 0;
 	
 	View myView;
 	SeekBar delay_bar;
@@ -47,6 +46,11 @@ public class MainActivity extends Activity {
 		
 		 myView = this.findViewById(android.R.id.content); //gets view
 		 
+		 delay_text = (TextView) findViewById(R.id.DelayText);
+		 period_text = (TextView) findViewById(R.id.PeriodText);
+		 max_speed_text = (TextView) findViewById(R.id.MaxSpeedText);
+		 min_speed_text = (TextView) findViewById(R.id.MinSpeedText);
+		 
 		 delay_bar = (SeekBar) findViewById(R.id.DelayBar);
 		 delay_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 	            public void onStopTrackingTouch(SeekBar seekBar) {
@@ -60,6 +64,7 @@ public class MainActivity extends Activity {
 					if (arg2) {
 						delay = (int) Math.floor(arg1);
 						arg0.setProgress(delay);
+						delay_text.setText("Delay: " + delay + " seconds");
 					}
 					
 				}			
@@ -78,6 +83,7 @@ public class MainActivity extends Activity {
 					if (arg2) {
 						period = (int) Math.floor(arg1);
 						arg0.setProgress(period);
+						period_text.setText("Period: " + period + " seconds");
 					}
 					
 				}			
@@ -96,6 +102,7 @@ public class MainActivity extends Activity {
 					if (arg2) {
 						max_speed = (int) Math.floor(arg1);
 						arg0.setProgress(max_speed);
+						max_speed_text.setText("Max Speed: " + max_speed + " MPH");
 					}
 					
 				}			
@@ -114,15 +121,11 @@ public class MainActivity extends Activity {
 					if (arg2) {
 						min_speed = (int) Math.floor(arg1);
 						arg0.setProgress(min_speed);
+						min_speed_text.setText("Min Speed: " + min_speed + " MPH");
 					}
 					
 				}			
 			});
-		 
-		 delay_text = (TextView) findViewById(R.id.DelayText);
-		 period_text = (TextView) findViewById(R.id.PeriodText);
-		 max_speed_text = (TextView) findViewById(R.id.MaxSpeedText);
-		 min_speed_text = (TextView) findViewById(R.id.MinSpeedText);
 		 
 	}
 	
@@ -144,19 +147,22 @@ public class MainActivity extends Activity {
 			i.putExtra(MAX_SPEED, max_speed);
 			i.putExtra(MIN_SPEED, min_speed);
 			
-			startActivity(i);
+			startActivityForResult(i,QUIT_ALL);
 		
 		}
 	}
 
+	protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+		if (resultCode == 1) {
+	        finish();
+	        System.exit(0);			
+		}
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		
-		
-		
-		
 		return true;
 	}
 	
@@ -164,11 +170,7 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	public void Goto_Return(View view) {
-        //finish();
-        //System.exit(0);		
-	}
-	
+	@SuppressWarnings("deprecation")
 	public void Goto_Quit(View view) { //quit
 		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		alertDialog.setTitle("Quit?");
@@ -189,9 +191,9 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.action_settings:
-	        	//this.findViewById(android.R.id.content);
-	        case R.id.action_return:
-
+	        	return true;
+	        case R.id.action_about:
+	        	return true;
 	        case R.id.action_quit:
 	        	Goto_Quit(this.findViewById(android.R.id.content));
 	    }
