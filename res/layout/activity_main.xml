@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/Begin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.20"
+                android:onClick="BeginRun"
+                android:text="GO!" />
+            
+		    <SeekBar
+		        android:id="@+id/DelayBar"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_alignParentTop="true"
+		        android:max="120"
+		        android:progress="15"
+		        android:layout_marginTop="60dp" />
+
+		    <TextView
+		        android:id="@+id/DelayText"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Delay"
+		        android:textSize="24sp" />
+		
+		    <SeekBar
+		        android:id="@+id/PeriodBar"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/seekBar1"
+		        android:max="120"
+		        android:progress="15"
+		        android:layout_marginTop="60dp" />
+
+		    <TextView
+		        android:id="@+id/PeriodText"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Period"
+		        android:textSize="24sp" />
+		
+		    <SeekBar
+		        android:id="@+id/MaxSpeedBar"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/seekBar2"
+		        android:max="12"
+		        android:progress="5"
+		        android:layout_marginTop="60dp" />
+
+		    <TextView
+		        android:id="@+id/MaxSpeedText"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="Max Speed"
+		        android:textSize="24sp" />
+		
+		    <SeekBar
+		        android:id="@+id/MinSpeedBar"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@+id/seekBar3"
+		        android:max="12"
+		        android:progress="3"
+		        android:layout_marginTop="60dp" />   
+		        
+		   <TextView
+		       android:id="@+id/MinSpeedText"
+		       android:textSize="24sp"
+		       android:layout_width="wrap_content"
+		       android:layout_height="wrap_content"
+		       android:text="Min Speed" />
+           
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
