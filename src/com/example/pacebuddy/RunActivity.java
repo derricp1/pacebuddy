@@ -1,5 +1,6 @@
 package com.example.pacebuddy;
 
+import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.os.Bundle;
@@ -20,25 +21,36 @@ import android.widget.TextView;
 
 public class RunActivity extends Activity implements SensorEventListener {
 	
-	int delay;
-	int period;
-	int max_speed;
-	int min_speed;
+	int delay = 0;
+	int period = 0;
+	int max_speed = 0;
+	int min_speed = 0;
 	
 	SensorManager mSensorManager;
 	Sensor mAccelerometer;
 	int curror;
 	int rotation;
-	float[] gravity;
+	float[] gravity = {(float)9.8,(float)9.8,(float)9.8};
+	final float alpha = (float) 0.8;
+	float[] linearacceleration = {0,0,0};
+	
+	DecimalFormat format = new DecimalFormat("00");
 	
 	TextView time_text;
 	int minutes = 0;
 	int seconds = 0;
-	int milliseconds = 0;
+	int centiseconds = 0;
 	
-	Integer delayms = 0;
+	float distance = 0;
+	float curraccel = 0;
+	float pastaccel = 0;
+	int lastchange = 0; //was last change positive or negative
+	
+	int delayms = 0;
 	boolean indelay = true;
 	int periodclock = 0;
+	
+	TextView[] views = new TextView[4];
 	
 	Timer timer = new Timer();
 
@@ -60,13 +72,6 @@ public class RunActivity extends Activity implements SensorEventListener {
         max_speed = intent.getIntExtra(MainActivity.MAX_SPEED, 0); //Will never need the default or it would not even get here. 0 is a choice though
         min_speed = intent.getIntExtra(MainActivity.MIN_SPEED, 0); //Will never need the default or it would not even get here. 0 is a choice though
         
-		
-		
-		gravity = new float[3];
-		for (int i=0; i<3; i++)
-			gravity[i] = (float) 9.8;
-		//Return to normal
-        
 		//check out orientation
 		Configuration config = getResources().getConfiguration();
 		curror = config.orientation; //1 for port, 2 for landscape
@@ -74,7 +79,12 @@ public class RunActivity extends Activity implements SensorEventListener {
 
 		time_text = (TextView) findViewById(R.id.time_text);
 		
-		timer.schedule(new updateTask(), 1, 10);
+		views[0] = (TextView) findViewById(R.id.textView1);
+		views[1] = (TextView) findViewById(R.id.textView2);
+		views[2] = (TextView) findViewById(R.id.textView3);
+		views[3] = (TextView) findViewById(R.id.textView4);
+
+		timer.schedule(new updateTask(), 0, 20);
 		
 	}
 
@@ -144,16 +154,15 @@ public class RunActivity extends Activity implements SensorEventListener {
 
 		@Override
 		public void run() {
-			synchronized (delayms) {
-				delayms += 1;
-				if (delayms.intValue() <= delay) {
+				delayms += 20;
+				if (delayms >= delay) {
 					indelay = false;
 				}
 				
-				if (!indelay) {
-					milliseconds++;
-					if (milliseconds == 100) {
-						milliseconds = 0;
+				if (indelay == false) {
+					centiseconds += 2;
+					if (centiseconds >= 100) {
+						centiseconds = 0;
 						seconds++;
 						if (seconds == 60) {
 							minutes++;
@@ -169,9 +178,26 @@ public class RunActivity extends Activity implements SensorEventListener {
 					
 				}
 				
-				time_text.setText(minutes + ":" + seconds + ":" + milliseconds);
-				
+				runOnUiThread(new timerUp());
+
+		}
+		
+	}
+	
+	public class timerUp implements Runnable {
+		
+		public void run() {
+			if (indelay == false) {
+				time_text.setText(minutes + ":" + format.format(seconds) + ":" + format.format(centiseconds));
 			}
+			else {
+				time_text.setText("IN DELAY PERIOD");
+			}
+	          
+	        views[0].setText(Float.toString(linearacceleration[0]));
+	        views[1].setText(Float.toString(linearacceleration[1]));
+	        views[2].setText(Float.toString(linearacceleration[2]));
+	        views[3].setText(Float.toString(distance));
 		}
 		
 	}
@@ -185,8 +211,39 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public void onSensorChanged(SensorEvent event) {
 		
 		//Left turns seem to have a positive x briefly, right turns negative
-		if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-			
+		if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER && indelay == false){
+
+	          gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
+	          gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
+	          gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+
+	          linearacceleration[0] = event.values[0] - gravity[0];
+	          linearacceleration[1] = event.values[1] - gravity[1];
+	          linearacceleration[2] = event.values[2] - gravity[2];
+	          
+	          //work with distances
+	          pastaccel = curraccel;
+	          curraccel = linearacceleration[2];
+	          
+	          if (pastaccel > curraccel && lastchange == 1) { //was increasing, now slowing
+	        	  if (Math.abs(pastaccel) > 1) {
+	        		  distance += (2 + Math.pow(Math.abs(pastaccel),1.3));
+	        	  }
+	          }
+	          if (pastaccel < curraccel && lastchange == -1) { //was slowing, now increasing
+	        	  if (Math.abs(pastaccel) > 1) {
+	        		  distance += (2 + Math.pow(Math.abs(pastaccel),1.3));
+	        	  }	        	  
+	          }
+	          
+	          lastchange = 0;
+	          if (pastaccel > curraccel) {
+	        	  lastchange = -1;
+	          }
+	          if (pastaccel < curraccel) {
+	        	  lastchange = 1;
+	          }
+	          
 		}
 	
 	}

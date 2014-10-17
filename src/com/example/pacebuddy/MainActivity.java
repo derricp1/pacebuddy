@@ -16,15 +16,15 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	static String DELAY = null;
-	static String PERIOD = null;
-	static String MAX_SPEED = null;
-	static String MIN_SPEED = null;
+	public final static String DELAY = "derricp1.apps.MESSAGE";
+	public final static String PERIOD = "derricp1.apps.MESSAGE2";
+	public final static String MAX_SPEED = "derricp1.apps.MESSAGE3";
+	public final static String MIN_SPEED = "derricp1.apps.MESSAGE4";
 	
-	int delay;
-	int period;
-	int max_speed;
-	int min_speed;
+	int delay = 15;
+	int period = 15;
+	int max_speed = 5;
+	int min_speed = 3;
 
 	int QUIT_ALL = 0;
 	
@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
 					if (arg2) {
-						period = (int) Math.floor(arg1);
+						period = Math.max(1,(int) Math.floor(arg1));
 						arg0.setProgress(period);
 						period_text.setText("Period: " + period + " seconds");
 					}
@@ -100,7 +100,7 @@ public class MainActivity extends Activity {
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
 					if (arg2) {
-						max_speed = (int) Math.floor(arg1);
+						max_speed = Math.max(1,(int) Math.floor(arg1));
 						arg0.setProgress(max_speed);
 						max_speed_text.setText("Max Speed: " + max_speed + " MPH");
 					}
@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
 					if (arg2) {
-						min_speed = (int) Math.floor(arg1);
+						min_speed = Math.max(1,(int) Math.floor(arg1));
 						arg0.setProgress(min_speed);
 						min_speed_text.setText("Min Speed: " + min_speed + " MPH");
 					}
@@ -156,6 +156,12 @@ public class MainActivity extends Activity {
 		if (resultCode == 1) {
 	        finish();
 	        System.exit(0);			
+		}
+		else {
+			delay_bar.setProgress(delay);
+			period_bar.setProgress(period);
+			max_speed_bar.setProgress(max_speed);
+			min_speed_bar.setProgress(min_speed);
 		}
 	}
 	
