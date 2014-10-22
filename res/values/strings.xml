@@ -8,5 +8,6 @@
     <string name="action_quit">Quit</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_run">RunActivity</string>
+    <string name="title_activity_results">ResultsActivity</string>
 
 </resources>

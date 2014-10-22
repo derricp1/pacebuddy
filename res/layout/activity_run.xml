@@ -7,52 +7,77 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".RunActivity" >
+    
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
 
-    <TextView
-        android:id="@+id/time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:text="0:00:00"
-        android:textSize="48sp"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/time_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp"
-        android:text="TextView" />
+            <TextView
+                android:id="@+id/time_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="42dp"
+                android:text="0:00:00"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="48sp" />
+	
+	    <Button
+	        android:id="@+id/lap_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignRight="@+id/textView1"
+	        android:layout_below="@+id/time_text"
+	        android:layout_marginTop="22dp"
+	        android:onClick="register_lap"
+	        android:text="LAP" />
+	
+	    <Button
+	        android:id="@+id/finish_button"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/textView4"
+	        android:layout_centerHorizontal="true"
+	        android:layout_marginTop="22dp"
+	        android:onClick="finish_run"
+	        android:text="Finish" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="22dp"
-        android:text="TextView" />
+	    <TextView
+	        android:id="@+id/textView1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="TextView" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_below="@+id/textView2"
-        android:layout_marginTop="22dp"
-        android:text="TextView" />
+	    <TextView
+	        android:id="@+id/textView2"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="22dp"
+	        android:text="TextView" />
+
+	    <TextView
+	        android:id="@+id/textView3"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="22dp"
+	        android:text="TextView" />
+    
+        </LinearLayout>
+    </ScrollView>
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/textView3"
-        android:layout_below="@+id/textView3"
-        android:layout_marginTop="27dp"
+        android:layout_alignLeft="@+id/scrollView1"
+        android:layout_alignParentBottom="true"
         android:text="TextView" />
 
 </RelativeLayout>
