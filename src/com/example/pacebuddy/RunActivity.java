@@ -54,6 +54,10 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SAVE_INDELAY = "SAVE_INDELAY";
 	public final static String SAVE_PERIODCLOCK = "SAVE_PERIODCLOCK";
 	
+	int QUIT_ALL = 0;
+	
+	final int MS = 20;
+	
 	int delay;
 	int period;
 	int max_speed;
@@ -189,7 +193,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		views[3] = (TextView) findViewById(R.id.textView4);
 		lap_button = (Button) findViewById(R.id.lap_button);
 
-		timer.schedule(new updateTask(), 0, 20); //should be last
+		timer.schedule(new updateTask(), 0, MS); //should be last
 		
 		canstart = true;
 		
@@ -261,7 +265,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 
 		@Override
 		public void run() {
-			delayms += 20;
+			delayms += MS;
 			if (delayms > delay) {
 				indelay = false;
 			}
@@ -279,7 +283,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 					}
 				}
 				
-				periodclock++;
+				periodclock += MS;
 				if (periodclock >= period) {
 					//update stats
 					period_distances[periods] = perioddistance;
@@ -295,7 +299,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 					
 				}
 				
-				lapclock++;
+				lapclock += MS;
 				
 			}
 			
@@ -386,7 +390,27 @@ public class RunActivity extends Activity implements SensorEventListener {
 	
 	public void register_lap(View view) {
 		if (!indelay) { //should only operate when moving in proper time
-			lap_times[laps] = lapclock/50; //seconds 
+			lap_times[laps] = lapclock/1000; //seconds from MS
+			lap_distances[laps] = lapdistance;
+			
+			laps++;
+			lapclock = 0;
+			lapdistance = 0;
+			
+			if (laps == lap_limit) {
+				lap_limit *= 2;
+				lap_times = Arrays.copyOf(lap_times,lap_limit);
+				lap_distances = Arrays.copyOf(lap_distances,lap_limit);
+			}
+		}
+	}
+	
+	public void finish_run(View view) { //advance to results
+		
+		//add the final period and lap
+		if (!indelay) { //should only operate when moving in proper time
+			
+			lap_times[laps] = lapclock/1000; //seconds from MS
 			lap_distances[laps] = lapdistance;
 			
 			laps++;
@@ -399,20 +423,47 @@ public class RunActivity extends Activity implements SensorEventListener {
 				lap_distances = Arrays.copyOf(lap_distances,lap_limit);
 			}
 			
+			period_distances[periods] = perioddistance;
+			perioddistance = 0;
+			
+			periodclock = 0;
+			periods++;
+			
+			if (periods == period_limit) {
+				period_limit *= 2;
+				period_distances = Arrays.copyOf(period_distances, period_limit); 
+			}			
+			
+			Intent i = new Intent(this, ResultsActivity.class);
+			
+			i.putExtra(PERIOD_MESSAGE, periods);
+			i.putExtra(PERIOD_DISTANCE_MESSAGE, period_distances);
+			i.putExtra(LAP_MESSAGE, laps);
+			i.putExtra(LAP_TIME_MESSAGE, lap_times);
+			i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
+			
+			startActivityForResult(i,QUIT_ALL);
+			
 		}
+		else {
+			Goto_Return(view);
+		}
+		
 	}
 	
-	public void finish_run(View view) { //advance to results
-		Intent i = new Intent(this, ResultsActivity.class);
-		
-		i.putExtra(PERIOD_MESSAGE, periods);
-		i.putExtra(PERIOD_DISTANCE_MESSAGE, period_distances);
-		i.putExtra(LAP_MESSAGE, laps);
-		i.putExtra(LAP_TIME_MESSAGE, lap_times);
-		i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
-		
-		startActivity(i);
-		
+	protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+		if (resultCode == 1) {
+	        Intent resultIntent = new Intent();
+	        setResult(1,resultIntent); //quit everything
+	        finish();
+	        System.exit(0);			
+		}
+		else {
+			Intent resultIntent = new Intent();
+			setResult(0,resultIntent); //don't quit everything
+			finish();
+	        System.exit(0);
+		}
 	}
 	
 	@Override
