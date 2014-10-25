@@ -385,7 +385,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	}
 	
 	public float getExtraDist(float pa) {
-		return (float) (2 + Math.pow(Math.abs(pa),1.3));
+		return (float) (0.5 + Math.pow(Math.abs(pa),1.1));
 	}
 	
 	public void register_lap(View view) {

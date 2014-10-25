@@ -3,12 +3,15 @@ package com.example.pacebuddy;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+//import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.view.Menu;
 import android.view.View;
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
+//import android.widget.HorizontalScrollView;
+//import android.widget.ScrollView;
+import android.widget.TextView;
 
 public class ResultsActivity extends Activity {
 
@@ -17,26 +20,43 @@ public class ResultsActivity extends Activity {
 	int laps;
 	float[] lap_times;
 	float[] lap_distances;
+	
+	final String SAVE_PERIODS = "q";
+	final String SAVE_PERIOD_DISTANCES = "q";
+	final String SAVE_LAPS = "q";
+	final String SAVE_LAP_TIMES = "q";
+	final String SAVE_LAP_DISTANCES = "q";
 
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_results);
+		setContentView(R.layout.activity_results);
+		
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 		
 		Intent intent = getIntent();
 		
 		int height = getWindowManager().getDefaultDisplay().getHeight();
 		int width = getWindowManager().getDefaultDisplay().getWidth();
 		
-		periods = intent.getIntExtra(RunActivity.PERIOD_MESSAGE, 0);
-		period_distances = intent.getFloatArrayExtra(RunActivity.PERIOD_DISTANCE_MESSAGE);
-		laps = intent.getIntExtra(RunActivity.LAP_MESSAGE, 0);
-		lap_times = intent.getFloatArrayExtra(RunActivity.LAP_TIME_MESSAGE);
-		lap_distances = intent.getFloatArrayExtra(RunActivity.LAP_DISTANCE_MESSAGE);
+		if (savedInstanceState != null) {
+			periods = savedInstanceState.getInt(SAVE_PERIODS);
+			period_distances = savedInstanceState.getFloatArray(SAVE_PERIOD_DISTANCES);
+			laps = savedInstanceState.getInt(SAVE_LAPS);
+			lap_times = savedInstanceState.getFloatArray(SAVE_LAP_TIMES);
+			lap_distances = savedInstanceState.getFloatArray(SAVE_LAP_DISTANCES);			
+		}
+		else {
+			periods = intent.getIntExtra(RunActivity.PERIOD_MESSAGE, 0);
+			period_distances = intent.getFloatArrayExtra(RunActivity.PERIOD_DISTANCE_MESSAGE);
+			laps = intent.getIntExtra(RunActivity.LAP_MESSAGE, 0);
+			lap_times = intent.getFloatArrayExtra(RunActivity.LAP_TIME_MESSAGE);
+			lap_distances = intent.getFloatArrayExtra(RunActivity.LAP_DISTANCE_MESSAGE);			
+		}
 		
-		ScrollView sv = new ScrollView(this);
-		HorizontalScrollView hv = new HorizontalScrollView(this);
+		//ResultsView rv = (ResultsView) findViewById(R.id.results);
+		//rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width);
 		
 		ResultsView rv = new ResultsView(getApplicationContext());
 		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width);
@@ -92,6 +112,11 @@ public class ResultsActivity extends Activity {
 		}
 		});
 		alertDialog.show();		
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		
 	}
 
 }

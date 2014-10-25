@@ -9,8 +9,8 @@ public class ResultsView extends View {
 	
 	int MIN_HEIGHT = 100;
 	int MAX_HEIGHT = 300;
-	int MIN_WIDTH;
-	int MAX_WIDTH;
+	int MIN_WIDTH = 0;
+	int MAX_WIDTH = 0;
 	int MIN_LAP_HEIGHT = 400;
 	int MAX_LAP_HEIGHT = 600;
 	
@@ -21,7 +21,7 @@ public class ResultsView extends View {
 	float[] lap_distances;
 	int height;
 	int width;
-
+	
 	Paint redpaint = new Paint(Color.RED);
 
 	public ResultsView(Context context) {
@@ -30,44 +30,48 @@ public class ResultsView extends View {
 	
 	@Override
 	public void onDraw(Canvas canvas) {
-		
+
 		//periods
-		if (periods == 0)
-			return;
+		if (periods != 0) {
 		
-		int dividedwidth = (MAX_WIDTH-MIN_WIDTH)/periods;
-		int currstart = MIN_WIDTH;
+			int dividedwidth = (MAX_WIDTH-MIN_WIDTH)/periods;
+			int currstart = MIN_WIDTH;
+			
+			float maxdistance = (float) 0.01;
+			for(int q=0;q<periods;q++) {
+				maxdistance = Math.max(maxdistance, period_distances[q]);
+			}
+			
+			for(int i=0;i<periods;i++) {
+				canvas.drawRect(currstart, MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance)), currstart+dividedwidth, MAX_HEIGHT, redpaint);
+				currstart += dividedwidth;
+			}
 		
-		float maxdistance = (float) 0.01;
-		for(int q=0;q<periods;q++) {
-			maxdistance = Math.max(maxdistance, period_distances[q]);
-		}
-		
-		for(int i=0;i<periods;i++) {
-			canvas.drawRect(currstart, MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance)), currstart+dividedwidth, MAX_HEIGHT, redpaint);
-			currstart += dividedwidth;
-		}
-		
-		float maxlapdistance = (float) 0.01;
-		for(int q=0;q<laps;q++) {
-			maxlapdistance = Math.max(maxlapdistance, lap_distances[q]);
 		}
 		
 		//laps
-		if (laps == 0)
-			return;		
+		if (laps > 1) {
+			
+			//this.addView(tv);
+			
+			float maxlapdistance = (float) 0.01;
+			for(int q=0;q<laps;q++) {
+				maxlapdistance = Math.max(maxlapdistance, lap_distances[q]);
+			}
 		
-		float totallaptime = (float) 0.01;
-		for(int q=0;q<laps;q++) {
-			totallaptime += lap_times[q];
-		}	
+			float totallaptime = (float) 0.01;
+			for(int q=0;q<laps;q++) {
+				totallaptime += lap_times[q];
+			}	
+			
+			float currstart = MIN_WIDTH;
+			
+			for(int i=0;i<laps;i++) {
+				canvas.drawRect(currstart, MAX_LAP_HEIGHT-((MAX_LAP_HEIGHT-MIN_LAP_HEIGHT)*(lap_distances[i]/maxlapdistance)), currstart+(MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime), MAX_LAP_HEIGHT, redpaint);
+				currstart += (MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime);
+			}	
 		
-		currstart = MIN_WIDTH;
-		
-		for(int i=0;i<laps;i++) {
-			canvas.drawRect(currstart, MAX_LAP_HEIGHT-((MAX_LAP_HEIGHT-MIN_LAP_HEIGHT)*(lap_distances[i]/maxlapdistance)), currstart+(MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime), MAX_LAP_HEIGHT, redpaint);
-			currstart += (MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime);
-		}		
+		}
 		
 	}
 	
@@ -80,8 +84,12 @@ public class ResultsView extends View {
 		height = h;
 		width = w;
 		
+		MIN_HEIGHT = h/4;
+		MAX_HEIGHT = h/2;
 		MIN_WIDTH = 0;
 		MAX_WIDTH = w;
+		MIN_LAP_HEIGHT = 3*h/4;
+		MAX_LAP_HEIGHT = h;
 	}
 
 }
