@@ -28,6 +28,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String LAP_MESSAGE = "derricp1.apps.RMESSAGE3";
 	public final static String LAP_TIME_MESSAGE = "derricp1.apps.RMESSAGE4";
 	public final static String LAP_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE5";
+	public final static String TIME_MESSAGE = "derricp1.apps.RMESSAGE6";
 	
 	//strings for state saving
 	public final static String SAVE_LAP_TIMES = "SAVE_LAP_TIMES";
@@ -53,10 +54,17 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SAVE_DELAYMS = "SAVE_DELAYMS";
 	public final static String SAVE_INDELAY = "SAVE_INDELAY";
 	public final static String SAVE_PERIODCLOCK = "SAVE_PERIODCLOCK";
+	public final static String SAVE_TICKS = "SAVE_TICKS";
+	public final static String SAVE_ABLE = "SAVE_ABLE";
 	
 	int QUIT_ALL = 0;
 	
 	final int MS = 20;
+	final float QUOTA = (float) 1.5; //minimum accel to count
+	final int NEXT_TICK = 10;
+	
+	int ticks = 0;
+	boolean able = true;
 	
 	int delay;
 	int period;
@@ -140,7 +148,9 @@ public class RunActivity extends Activity implements SensorEventListener {
 			lastchange = savedInstanceState.getInt(SAVE_LASTCHANGE);
 			delayms = savedInstanceState.getInt(SAVE_DELAYMS);
 			indelay = savedInstanceState.getBoolean(SAVE_INDELAY);
-			periodclock = savedInstanceState.getInt(SAVE_PERIODCLOCK);			
+			periodclock = savedInstanceState.getInt(SAVE_PERIODCLOCK);	
+			ticks = savedInstanceState.getInt(SAVE_TICKS);
+			able = savedInstanceState.getBoolean(SAVE_ABLE);
 		}
 		else {
 			lap_times = new float[5];
@@ -171,6 +181,9 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	delayms = 0;
 	    	indelay = true;
 	    	periodclock = 0;
+	    	
+	    	ticks = 0;
+	    	able = true;
 		}
 		
 		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //Also need to be able to recover info on destroy and recreate
@@ -272,6 +285,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 			
 			if (indelay == false) {
 				
+				if (ticks > 0)
+					ticks--;
 				
 				centiseconds += 2;
 				if (centiseconds >= 100) {
@@ -336,7 +351,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public void onSensorChanged(SensorEvent event) {
 		
 		//Left turns seem to have a positive x briefly, right turns negative
-		if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER && indelay == false){
+		if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER && indelay == false && ticks == 0){
 
 	          gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
 	          gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
@@ -350,21 +365,30 @@ public class RunActivity extends Activity implements SensorEventListener {
 	          pastaccel = curraccel;
 	          curraccel = linearacceleration[2];
 	          
-	          if (pastaccel > curraccel && lastchange == 1) { //was increasing, now slowing
-	        	  if (Math.abs(pastaccel) > 1) {
-	        		  float d = getExtraDist(pastaccel);
-	        		  distance += d;
-	        		  lapdistance += d;
-	        		  perioddistance += d;
-	        	  }
+	          if (able == true) {
+		          if (pastaccel > curraccel && lastchange == 1) { //was increasing, now slowing
+		        	  if (Math.abs(pastaccel) > QUOTA) {
+		        		  ticks = NEXT_TICK;
+		        		  float d = getExtraDist(pastaccel);
+		        		  distance += d;
+		        		  lapdistance += d;
+		        		  perioddistance += d;
+		        	  }
+		          }
+		          if (pastaccel < curraccel && lastchange == -1) { //was slowing, now increasing
+		        	  if (Math.abs(pastaccel) > QUOTA) {
+		        		  ticks = NEXT_TICK;
+		        		  float d = getExtraDist(pastaccel);
+		        		  distance += d;
+		        		  lapdistance += d;
+		        		  perioddistance += d;
+		        	  }	        	  
+		          }
 	          }
-	          if (pastaccel < curraccel && lastchange == -1) { //was slowing, now increasing
-	        	  if (Math.abs(pastaccel) > 1) {
-	        		  float d = getExtraDist(pastaccel);
-	        		  distance += d;
-	        		  lapdistance += d;
-	        		  perioddistance += d;
-	        	  }	        	  
+	          else {
+	        	  if (Math.abs(curraccel) < QUOTA/2) {
+	        		  able = true;
+	        	  }
 	          }
 	          
 	          lastchange = 0;
@@ -385,7 +409,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	}
 	
 	public float getExtraDist(float pa) {
-		return (float) (0.5 + Math.pow(Math.abs(pa),1.1));
+		return (float) (0.2 + Math.pow(Math.abs(pa),0.8));
 	}
 	
 	public void register_lap(View view) {
@@ -441,6 +465,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 			i.putExtra(LAP_MESSAGE, laps);
 			i.putExtra(LAP_TIME_MESSAGE, lap_times);
 			i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
+			i.putExtra(TIME_MESSAGE, (centiseconds + 100 * seconds + 6000 * minutes));
 			
 			startActivityForResult(i,QUIT_ALL);
 			
@@ -491,7 +516,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putInt(SAVE_DELAYMS, delayms);
 		savedInstanceState.putBoolean(SAVE_INDELAY, indelay);
 		savedInstanceState.putInt(SAVE_PERIODCLOCK, periodclock);	
-	    
+		savedInstanceState.putBoolean(SAVE_ABLE, able);	
+		
 	    // Always call the superclass so it can save the view hierarchy state
 	    super.onSaveInstanceState(savedInstanceState);
 	}

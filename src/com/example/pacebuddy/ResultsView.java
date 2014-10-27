@@ -1,4 +1,6 @@
 package com.example.pacebuddy;
+import java.text.DecimalFormat;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,8 +23,11 @@ public class ResultsView extends View {
 	float[] lap_distances;
 	int height;
 	int width;
+	int time;
 	
 	Paint redpaint = new Paint(Color.RED);
+	Paint blackpaint = new Paint(Color.BLACK);
+	DecimalFormat format = new DecimalFormat("00");
 
 	public ResultsView(Context context) {
 		super(context);
@@ -30,10 +35,27 @@ public class ResultsView extends View {
 	
 	@Override
 	public void onDraw(Canvas canvas) {
+		
+		float totaldistance = 0;
+		for (int i=0; i<periods; i++)
+			totaldistance += period_distances[i];
+		
+		totaldistance /= 5280;
+		
+		//distance on top
+		canvas.drawText("Total Distance: " + totaldistance + " miles", 10, 10, blackpaint);
+		
+		int minutes = (int) Math.floor(time/6000);
+		int seconds = (int) Math.floor((time - (minutes * 6000))/100);
+		int milliseconds = (int) (time - (minutes * 6000) - (100 * seconds));
+		
+		canvas.drawText("Total Time: " + format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, 10, blackpaint);
 
 		//periods
 		if (periods != 0) {
 		
+			canvas.drawText("Periods", 10, (float) (MAX_HEIGHT*0.15), blackpaint);
+			
 			int dividedwidth = (MAX_WIDTH-MIN_WIDTH)/periods;
 			int currstart = MIN_WIDTH;
 			
@@ -52,7 +74,7 @@ public class ResultsView extends View {
 		//laps
 		if (laps > 1) {
 			
-			//this.addView(tv);
+			canvas.drawText("Laps", 10, (float) (MAX_HEIGHT*0.65), blackpaint);
 			
 			float maxlapdistance = (float) 0.01;
 			for(int q=0;q<laps;q++) {
@@ -75,7 +97,7 @@ public class ResultsView extends View {
 		
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -83,11 +105,12 @@ public class ResultsView extends View {
 		lap_distances = ld;
 		height = h;
 		width = w;
+		time = ti;
 		
 		MIN_HEIGHT = h/4;
 		MAX_HEIGHT = h/2;
-		MIN_WIDTH = 0;
-		MAX_WIDTH = w;
+		MIN_WIDTH = 50;
+		MAX_WIDTH = w-50;
 		MIN_LAP_HEIGHT = 3*h/4;
 		MAX_LAP_HEIGHT = h;
 	}
