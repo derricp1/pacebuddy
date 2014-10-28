@@ -25,11 +25,6 @@ public class ResultsView extends View {
 	int width;
 	int time;
 	
-	int[] max_times;
-	int[] min_times;
-	int num_max_times;
-	int num_min_times;
-	
 	int TOTAL_HEIGHT;
 	
 	Paint redpaint = new Paint(Color.RED);
@@ -111,7 +106,7 @@ public class ResultsView extends View {
 		
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int[] maxt, int[] mint, int max, int min) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -120,11 +115,6 @@ public class ResultsView extends View {
 		height = h;
 		width = w;
 		time = ti;
-		
-		max_times = maxt;
-		min_times = mint;
-		num_max_times = max;
-		num_min_times = min;
 		
 		MIN_HEIGHT = h/4;
 		MAX_HEIGHT = h/2;

@@ -29,10 +29,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String LAP_TIME_MESSAGE = "derricp1.apps.RMESSAGE4";
 	public final static String LAP_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE5";
 	public final static String TIME_MESSAGE = "derricp1.apps.RMESSAGE6";
-	public final static String MAX_TIMES_MESSAGE = "derricp1.apps.RMESSAGE3";
-	public final static String MIN_TIMES_MESSAGE = "derricp1.apps.RMESSAGE4";
-	public final static String NUM_MAX_TIMES_MESSAGE = "derricp1.apps.RMESSAGE5";
-	public final static String NUM_MIN_TIMES_MESSAGE = "derricp1.apps.RMESSAGE6";
+	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
+	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
 	
 	//strings for state saving
 	public final static String SAVE_LAP_TIMES = "SAVE_LAP_TIMES";
@@ -70,8 +68,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	int QUIT_ALL = 0;
 	
 	final int MS = 20;
-	final float QUOTA = (float) 1.5; //minimum accel to count
-	final int NEXT_TICK = 10;
+	final float QUOTA = (float) 1.4; //minimum accel to count
+	final int NEXT_TICK = 8;
 	
 	int ticks = 0;
 	boolean able = true;
@@ -88,6 +86,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	float[] gravity = {(float)9.8,(float)9.8,(float)9.8};
 	final float alpha = (float) 0.8;
 	float[] linearacceleration = {0,0,0};
+	
+	float this_period_speed;
 	
 	DecimalFormat format = new DecimalFormat("00");
 	
@@ -126,13 +126,6 @@ public class RunActivity extends Activity implements SensorEventListener {
 	int lap_limit;
 	
 	boolean canstart = false;
-	
-	int[] max_times;
-	int[] min_times;
-	boolean reached_min; //reached min at all
-	float last_period_speed;
-	int num_max_times;
-	int num_min_times;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -168,13 +161,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 			periodclock = savedInstanceState.getInt(SAVE_PERIODCLOCK);	
 			ticks = savedInstanceState.getInt(SAVE_TICKS);
 			able = savedInstanceState.getBoolean(SAVE_ABLE);
-			max_times = savedInstanceState.getIntArray(SAVE_MAX_TIMES);
-			min_times = savedInstanceState.getIntArray(SAVE_MIN_TIMES);
-			reached_min = savedInstanceState.getBoolean(SAVE_REACHED_MIN);
-			last_period_speed = savedInstanceState.getFloat(SAVE_LAST_PERIOD_SPEED);			
-			num_max_times = savedInstanceState.getInt(SAVE_NUM_MAX_TIMES);
-			num_min_times = savedInstanceState.getInt(SAVE_NUM_MIN_TIMES);
-			
+
 		}
 		else {
 			lap_times = new float[5];
@@ -209,12 +196,6 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	ticks = 0;
 	    	able = true;
 	    	
-	    	max_times = new int[5];
-	    	num_max_times = 0;
-	    	min_times = new int[5];
-	    	num_min_times = 0;
-	    	reached_min = false;
-	    	last_period_speed = 0;
 		}
 		
 		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //Also need to be able to recover info on destroy and recreate
@@ -331,7 +312,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 				if (periodclock >= period) {
 					//update stats
 					
-					float this_period_speed = (perioddistance/5280)/(period/(1000*3600)) /*period*/; //needs to be calculated
+					this_period_speed = (perioddistance/5280)/(period/(1000*3600)) /*period*/; //needs to be calculated
 					
 					period_distances[periods] = perioddistance;
 					perioddistance = 0;
@@ -342,30 +323,6 @@ public class RunActivity extends Activity implements SensorEventListener {
 					if (periods == period_limit) {
 						period_limit *= 2;
 						period_distances = Arrays.copyOf(period_distances, period_limit); 
-					}
-					
-					
-					if (this_period_speed > min_speed) {
-						reached_min = true;
-					}
-					if (reached_min == true) {
-						
-						if (last_period_speed < max_speed && this_period_speed >= max_speed) {
-							max_times[num_max_times] = periods*period;
-							num_max_times++;
-							if (num_max_times >= max_times.length) {
-								max_times = Arrays.copyOf(max_times, num_max_times*2);
-							}
-						}
-						if (last_period_speed > min_speed && this_period_speed <= min_speed) {
-							min_times[num_min_times] = periods*period;
-							num_min_times++;
-							if (num_min_times >= min_times.length) {
-								min_times = Arrays.copyOf(min_times, num_min_times*2);
-							}
-						}						
-						
-						last_period_speed = this_period_speed;
 					}
 					
 				}
@@ -465,7 +422,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	}
 	
 	public float getExtraDist(float pa) {
-		return (float) (0.4 + Math.pow(Math.abs(pa),0.9));
+		return (float) (0.5 + Math.pow(Math.abs(pa),0.85));
 	}
 	
 	public void register_lap(View view) {
@@ -522,10 +479,10 @@ public class RunActivity extends Activity implements SensorEventListener {
 			i.putExtra(LAP_TIME_MESSAGE, lap_times);
 			i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
 			i.putExtra(TIME_MESSAGE, (centiseconds + 100 * seconds + 6000 * minutes));
-			i.putExtra(MAX_TIMES_MESSAGE, max_times);
-			i.putExtra(MIN_TIMES_MESSAGE, min_times);
-			i.putExtra(NUM_MAX_TIMES_MESSAGE, num_max_times);
-			i.putExtra(NUM_MIN_TIMES_MESSAGE, num_min_times);
+			i.putExtra(PERIOD_TIME_MESSAGE, period);
+			
+			int[] speeds = {max_speed,min_speed};
+			i.putExtra(SPEEDS_MESSAGE, speeds);
 			
 			startActivityForResult(i,QUIT_ALL);
 			
@@ -577,12 +534,6 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putBoolean(SAVE_INDELAY, indelay);
 		savedInstanceState.putInt(SAVE_PERIODCLOCK, periodclock);	
 		savedInstanceState.putBoolean(SAVE_ABLE, able);
-		savedInstanceState.putIntArray(SAVE_MAX_TIMES, max_times);
-		savedInstanceState.putIntArray(SAVE_MIN_TIMES, min_times);
-		savedInstanceState.putBoolean(SAVE_REACHED_MIN, reached_min);
-		savedInstanceState.putFloat(SAVE_LAST_PERIOD_SPEED, last_period_speed);			
-		savedInstanceState.putInt(SAVE_NUM_MAX_TIMES, num_max_times);
-		savedInstanceState.putInt(SAVE_NUM_MIN_TIMES, num_min_times);
 		
 	    // Always call the superclass so it can save the view hierarchy state
 	    super.onSaveInstanceState(savedInstanceState);

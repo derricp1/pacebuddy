@@ -20,10 +20,8 @@ public class ResultsActivity extends Activity {
 	float[] lap_times;
 	float[] lap_distances;
 	int time;
-	int[] max_times;
-	int[] min_times;
-	int num_max_times;
-	int num_min_times;
+	int period_time;
+	int[] speeds;
 	
 	public final static String PERIOD_MESSAGE = "derricp1.apps.RMESSAGE";
 	public final static String PERIOD_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE2";
@@ -31,22 +29,18 @@ public class ResultsActivity extends Activity {
 	public final static String LAP_TIME_MESSAGE = "derricp1.apps.RMESSAGE4";
 	public final static String LAP_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE5";
 	public final static String TIME_MESSAGE = "derricp1.apps.RMESSAGE6";
-	public final static String MAX_TIMES_MESSAGE = "derricp1.apps.RMESSAGE3";
-	public final static String MIN_TIMES_MESSAGE = "derricp1.apps.RMESSAGE4";
-	public final static String NUM_MAX_TIMES_MESSAGE = "derricp1.apps.RMESSAGE5";
-	public final static String NUM_MIN_TIMES_MESSAGE = "derricp1.apps.RMESSAGE6";
+	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
+	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
 	
 	final String SAVE_PERIODS = "q";
-	final String SAVE_PERIOD_DISTANCES = "q";
-	final String SAVE_LAPS = "q";
-	final String SAVE_LAP_TIMES = "q";
-	final String SAVE_LAP_DISTANCES = "q";
-	final String SAVE_TIME = "q";
-	final String SAVE_MAX_TIMES = "SAVE_MAX_TIMES";
-	final String SAVE_MIN_TIMES = "SAVE_MIN_TIMES";
-	final String SAVE_NUM_MAX_TIMES = "SAVE_NUM_MAX_TIMES";
-	final String SAVE_NUM_MIN_TIMES = "SAVE_NUM_MIN_TIMES";
-
+	final String SAVE_PERIOD_DISTANCES = "qq";
+	final String SAVE_LAPS = "qqq";
+	final String SAVE_LAP_TIMES = "qqqq";
+	final String SAVE_LAP_DISTANCES = "qqqqq";
+	final String SAVE_TIME = "qqqqqq";
+	final String SAVE_PERIOD_TIME = "qqqqqqq";
+	final String SAVE_SPEEDS = "qqqqqqqq";
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +61,8 @@ public class ResultsActivity extends Activity {
 			lap_times = savedInstanceState.getFloatArray(SAVE_LAP_TIMES);
 			lap_distances = savedInstanceState.getFloatArray(SAVE_LAP_DISTANCES);	
 			time = savedInstanceState.getInt(SAVE_TIME);	
-			max_times = savedInstanceState.getIntArray(SAVE_MAX_TIMES);
-			min_times = savedInstanceState.getIntArray(SAVE_MIN_TIMES);
-			num_max_times = savedInstanceState.getInt(SAVE_NUM_MAX_TIMES);	
-			num_min_times = savedInstanceState.getInt(SAVE_NUM_MIN_TIMES);	
+			period_time = savedInstanceState.getInt(SAVE_PERIOD_TIME);
+			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
 		}
 		else {
 			periods = intent.getIntExtra(RunActivity.PERIOD_MESSAGE, 0);
@@ -79,17 +71,15 @@ public class ResultsActivity extends Activity {
 			lap_times = intent.getFloatArrayExtra(RunActivity.LAP_TIME_MESSAGE);
 			lap_distances = intent.getFloatArrayExtra(RunActivity.LAP_DISTANCE_MESSAGE);
 			time = intent.getIntExtra(RunActivity.TIME_MESSAGE, 0);
-			max_times = intent.getIntArrayExtra(RunActivity.MAX_TIMES_MESSAGE);
-			min_times = intent.getIntArrayExtra(RunActivity.MIN_TIMES_MESSAGE);
-			num_max_times = intent.getIntExtra(RunActivity.NUM_MAX_TIMES_MESSAGE,0);
-			num_min_times = intent.getIntExtra(RunActivity.NUM_MIN_TIMES_MESSAGE,0);
+			period_time = intent.getIntExtra(RunActivity.PERIOD_TIME_MESSAGE, 0);
+			speeds = intent.getIntArrayExtra(RunActivity.SPEEDS_MESSAGE);
 		}
 		
 		//ResultsView rv = (ResultsView) findViewById(R.id.results);
 		//rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width);
 		
 		ResultsView rv = new ResultsView(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, max_times, min_times, num_max_times, num_min_times);
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time);
 		
 		//hv.addView(rv);
 		//sv.addView(hv);
@@ -115,10 +105,8 @@ public class ResultsActivity extends Activity {
 		i.putExtra(LAP_TIME_MESSAGE, lap_times);
 		i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
 		i.putExtra(TIME_MESSAGE, time);
-		i.putExtra(MAX_TIMES_MESSAGE, max_times);
-		i.putExtra(MIN_TIMES_MESSAGE, min_times);
-		i.putExtra(NUM_MAX_TIMES_MESSAGE, num_max_times);
-		i.putExtra(NUM_MIN_TIMES_MESSAGE, num_min_times);
+		i.putExtra(PERIOD_TIME_MESSAGE, period_time);
+		i.putExtra(SPEEDS_MESSAGE, speeds);
 		
 		startActivityForResult(i, QUIT_ALL);		
 

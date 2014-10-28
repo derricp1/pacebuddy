@@ -1,5 +1,6 @@
 package com.example.pacebuddy;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -24,11 +25,8 @@ public class ResultsView2 extends View {
 	int height;
 	int width;
 	int time;
-	
-	int[] max_times;
-	int[] min_times;
-	int num_max_times;
-	int num_min_times;
+	int period_time;
+	int[] speeds;
 	
 	int TOTAL_HEIGHT;
 	
@@ -46,39 +44,58 @@ public class ResultsView2 extends View {
 	@Override
 	public void onDraw(Canvas canvas) {
 		
-		float height = 50;
-		if (TOTAL_HEIGHT/(num_max_times+1) < 50 || TOTAL_HEIGHT/(num_min_times+1) < 50)
-			height = Math.min((num_max_times+1)/TOTAL_HEIGHT, (num_min_times+1)/TOTAL_HEIGHT);
+		ArrayList<Integer> over_periods = new ArrayList<Integer>();
+		ArrayList<Integer> under_periods = new ArrayList<Integer>();
+		boolean over_min = false;
 		
-		blackpaint.setTextSize(Math.max(20,height));
+		for (int i=0;i<periods;i++) {
+			float speed = (period_distances[i]/5280)/(period_time/(3600*1000));
+			if (over_min == false && speed >= speeds[1]) {
+				over_min = true;
+			}
+			if (speed > speeds[0]) {
+				over_periods.add((i+1)*period_time);
+			}
+			else if (over_min == true && speed < speeds[1]) {
+				under_periods.add((i+1)*period_time);
+			}
+				
+		}
+		
+		float iheight = 50;
+		if (TOTAL_HEIGHT/(over_periods.size()+2) < 50 || TOTAL_HEIGHT/(under_periods.size()+2) < 50)
+			iheight = Math.min((over_periods.size()+2)/TOTAL_HEIGHT, (under_periods.size()+2)/TOTAL_HEIGHT);
+		
+		blackpaint.setTextSize(Math.max(20,iheight));
 		blackpaint.setColor(Color.BLACK);
 		
-		canvas.drawText("Over Max", 10, 10, blackpaint);
-		canvas.drawText("Under Min", (MAX_WIDTH+50)/2 + 10, 10, blackpaint);
+		canvas.drawText("Over Max", 10, iheight, blackpaint);
+		canvas.drawText("Under Min", (MAX_WIDTH+50)/2 + 10, iheight, blackpaint);
 		
-		float currloc = height;
-		for (int i=0;i<num_max_times;i++) {
+		float currloc = iheight*2;
+		for (int i=0;i<over_periods.size();i++) {
 			
-			int minutes = (int) Math.floor(max_times[i]/6000);
-			int seconds = (int) Math.floor((max_times[i] - (minutes * 6000))/100);
-			int milliseconds = (int) (max_times[i] - (minutes * 6000) - (100 * seconds));
-			
-			canvas.drawText(format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, currloc, blackpaint);
-			currloc += height;
-		}
-		currloc = height;
-		for (int i=0;i<num_min_times;i++) {
-			int minutes = (int) Math.floor(min_times[i]/6000);
-			int seconds = (int) Math.floor((min_times[i] - (minutes * 6000))/100);
-			int milliseconds = (int) (min_times[i] - (minutes * 6000) - (100 * seconds));
+			int minutes = (int) Math.floor(over_periods.get(i)/60000);
+			int seconds = (int) Math.floor((over_periods.get(i) - (minutes * 60000))/1000);
+			int milliseconds = (int) (over_periods.get(i) - (minutes * 60000) - (1000 * seconds));
 			
 			canvas.drawText(format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, currloc, blackpaint);
-			currloc += height;
+			currloc += iheight;
 		}
+		currloc = iheight*2;
+		for (int i=0;i<under_periods.size();i++) {
+			int minutes = (int) Math.floor(under_periods.get(i)/60000);
+			int seconds = (int) Math.floor((under_periods.get(i) - (minutes * 60000))/1000);
+			int milliseconds = (int) (under_periods.get(i) - (minutes * 60000) - (1000 * seconds));
+			
+			canvas.drawText(format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, currloc, blackpaint);
+			currloc += iheight;
+		}
+
 			
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int[] maxt, int[] mint, int max, int min) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -87,11 +104,8 @@ public class ResultsView2 extends View {
 		height = h;
 		width = w;
 		time = ti;
-		
-		max_times = maxt;
-		min_times = mint;
-		num_max_times = max;
-		num_min_times = min;
+		period_time = pti;
+		speeds = sp;
 		
 		MIN_HEIGHT = h/4;
 		MAX_HEIGHT = h/2;

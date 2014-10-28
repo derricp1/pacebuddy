@@ -19,22 +19,18 @@ public class ResultActivityTwo extends Activity {
 	float[] lap_times;
 	float[] lap_distances;
 	int time;
-	int[] max_times;
-	int[] min_times;
-	int num_max_times;
-	int num_min_times;
+	int period_time;
+	int[] speeds;
 	
 	final String SAVE_PERIODS = "q";
-	final String SAVE_PERIOD_DISTANCES = "q";
-	final String SAVE_LAPS = "q";
-	final String SAVE_LAP_TIMES = "q";
-	final String SAVE_LAP_DISTANCES = "q";
-	final String SAVE_TIME = "q";
-	final String SAVE_MAX_TIMES = "SAVE_MAX_TIMES";
-	final String SAVE_MIN_TIMES = "SAVE_MIN_TIMES";
-	final String SAVE_NUM_MAX_TIMES = "SAVE_NUM_MAX_TIMES";
-	final String SAVE_NUM_MIN_TIMES = "SAVE_NUM_MIN_TIMES";
-
+	final String SAVE_PERIOD_DISTANCES = "qq";
+	final String SAVE_LAPS = "qqq";
+	final String SAVE_LAP_TIMES = "qqqq";
+	final String SAVE_LAP_DISTANCES = "qqqqq";
+	final String SAVE_TIME = "qqqqqq";
+	final String SAVE_PERIOD_TIME = "qqqqqqq";
+	final String SAVE_SPEEDS = "qqqqqqqq";
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +51,7 @@ public class ResultActivityTwo extends Activity {
 			lap_times = savedInstanceState.getFloatArray(SAVE_LAP_TIMES);
 			lap_distances = savedInstanceState.getFloatArray(SAVE_LAP_DISTANCES);	
 			time = savedInstanceState.getInt(SAVE_TIME);	
-			max_times = savedInstanceState.getIntArray(SAVE_MAX_TIMES);
-			min_times = savedInstanceState.getIntArray(SAVE_MIN_TIMES);
-			num_max_times = savedInstanceState.getInt(SAVE_NUM_MAX_TIMES);	
-			num_min_times = savedInstanceState.getInt(SAVE_NUM_MIN_TIMES);	
+			period_time = savedInstanceState.getInt(SAVE_PERIOD_TIME);
 		}
 		else {
 			periods = intent.getIntExtra(ResultsActivity.PERIOD_MESSAGE, 0);
@@ -67,14 +60,12 @@ public class ResultActivityTwo extends Activity {
 			lap_times = intent.getFloatArrayExtra(ResultsActivity.LAP_TIME_MESSAGE);
 			lap_distances = intent.getFloatArrayExtra(ResultsActivity.LAP_DISTANCE_MESSAGE);
 			time = intent.getIntExtra(ResultsActivity.TIME_MESSAGE, 0);
-			max_times = intent.getIntArrayExtra(ResultsActivity.MAX_TIMES_MESSAGE);
-			min_times = intent.getIntArrayExtra(ResultsActivity.MIN_TIMES_MESSAGE);
-			num_max_times = intent.getIntExtra(ResultsActivity.NUM_MAX_TIMES_MESSAGE,0);
-			num_min_times = intent.getIntExtra(ResultsActivity.NUM_MIN_TIMES_MESSAGE,0);
+			period_time = intent.getIntExtra(ResultsActivity.PERIOD_TIME_MESSAGE, 0);
+			speeds = intent.getIntArrayExtra(ResultsActivity.SPEEDS_MESSAGE);
 		}
 		
 		ResultsView2 rv = new ResultsView2(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, max_times, min_times, num_max_times, num_min_times);
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds);
 		setContentView(rv);			
 	}
 

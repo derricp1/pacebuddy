@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
 					if (arg2) {
-						delay = (int) Math.floor(arg1);
+						delay = (int) (5*Math.floor(arg1/5));
 						arg0.setProgress(delay);
 						delay_text.setText("Delay: " + delay + " seconds");
 					}
@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
 					if (arg2) {
-						period = Math.max(1,(int) Math.floor(arg1));
+						period = Math.max(1,(int) (5*Math.floor(arg1/5)));
 						arg0.setProgress(period);
 						period_text.setText("Period: " + period + " seconds");
 					}
