@@ -51,7 +51,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentLeft="true"
 		        android:layout_below="@+id/DelayBar"
-		        android:max="120"
+		        android:max="300"
 		        android:progress="15"
 		        android:layout_marginTop="60dp" />
 

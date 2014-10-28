@@ -30,6 +30,10 @@
             android:name="com.example.pacebuddy.ResultsActivity"
             android:label="@string/title_activity_results" >
         </activity>
+        <activity
+            android:name="com.example.pacebuddy.ResultActivityTwo"
+            android:label="@string/title_activity_result_activity_two" >
+        </activity>
     </application>
 
 </manifest>

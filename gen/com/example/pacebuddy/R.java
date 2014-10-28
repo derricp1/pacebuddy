@@ -34,6 +34,7 @@ public final class R {
         public static final int PeriodBar=0x7f080004;
         public static final int PeriodText=0x7f080005;
         public static final int action_about=0x7f080012;
+        public static final int action_next=0x7f080015;
         public static final int action_quit=0x7f080013;
         public static final int action_return=0x7f080014;
         public static final int action_settings=0x7f080011;
@@ -48,13 +49,15 @@ public final class R {
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
-        public static final int activity_results=0x7f030001;
-        public static final int activity_run=0x7f030002;
+        public static final int activity_result_activity_two=0x7f030001;
+        public static final int activity_results=0x7f030002;
+        public static final int activity_run=0x7f030003;
     }
     public static final class menu {
         public static final int main=0x7f070000;
-        public static final int results=0x7f070001;
-        public static final int run=0x7f070002;
+        public static final int result_activity_two=0x7f070001;
+        public static final int results=0x7f070002;
+        public static final int run=0x7f070003;
     }
     public static final class string {
         public static final int action_about=0x7f050002;
@@ -63,6 +66,7 @@ public final class R {
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
         public static final int hello_world=0x7f050005;
+        public static final int title_activity_result_activity_two=0x7f050008;
         public static final int title_activity_results=0x7f050007;
         public static final int title_activity_run=0x7f050006;
     }

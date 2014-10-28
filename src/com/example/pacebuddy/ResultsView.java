@@ -9,13 +9,13 @@ import android.view.View;
 
 public class ResultsView extends View {
 	
-	int MIN_HEIGHT = 100;
-	int MAX_HEIGHT = 300;
-	int MIN_WIDTH = 0;
-	int MAX_WIDTH = 0;
-	int MIN_LAP_HEIGHT = 400;
-	int MAX_LAP_HEIGHT = 600;
-	
+	int MIN_HEIGHT;
+	int MAX_HEIGHT;
+	int MIN_WIDTH;
+	int MAX_WIDTH;
+	int MIN_LAP_HEIGHT;
+	int MAX_LAP_HEIGHT;
+			
 	int periods;
 	float[] period_distances;
 	int laps;
@@ -25,9 +25,19 @@ public class ResultsView extends View {
 	int width;
 	int time;
 	
+	int[] max_times;
+	int[] min_times;
+	int num_max_times;
+	int num_min_times;
+	
+	int TOTAL_HEIGHT;
+	
 	Paint redpaint = new Paint(Color.RED);
 	Paint blackpaint = new Paint(Color.BLACK);
+	
+	
 	DecimalFormat format = new DecimalFormat("00");
+	DecimalFormat format2 = new DecimalFormat("0.000");
 
 	public ResultsView(Context context) {
 		super(context);
@@ -36,6 +46,10 @@ public class ResultsView extends View {
 	@Override
 	public void onDraw(Canvas canvas) {
 		
+		blackpaint.setTextSize(50);
+		blackpaint.setColor(Color.BLACK);
+		redpaint.setColor(Color.RED);
+		
 		float totaldistance = 0;
 		for (int i=0; i<periods; i++)
 			totaldistance += period_distances[i];
@@ -43,18 +57,18 @@ public class ResultsView extends View {
 		totaldistance /= 5280;
 		
 		//distance on top
-		canvas.drawText("Total Distance: " + totaldistance + " miles", 10, 10, blackpaint);
+		canvas.drawText("Distance: " + format2.format(totaldistance) + " miles", 10, (float) (TOTAL_HEIGHT*0.07), blackpaint);
 		
 		int minutes = (int) Math.floor(time/6000);
 		int seconds = (int) Math.floor((time - (minutes * 6000))/100);
 		int milliseconds = (int) (time - (minutes * 6000) - (100 * seconds));
 		
-		canvas.drawText("Total Time: " + format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, 10, blackpaint);
+		canvas.drawText("Time: " + format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, (float) (TOTAL_HEIGHT*0.14), blackpaint);
 
 		//periods
 		if (periods != 0) {
 		
-			canvas.drawText("Periods", 10, (float) (MAX_HEIGHT*0.15), blackpaint);
+			canvas.drawText("Periods", 10, (float) (TOTAL_HEIGHT*0.21), blackpaint);
 			
 			int dividedwidth = (MAX_WIDTH-MIN_WIDTH)/periods;
 			int currstart = MIN_WIDTH;
@@ -74,7 +88,7 @@ public class ResultsView extends View {
 		//laps
 		if (laps > 1) {
 			
-			canvas.drawText("Laps", 10, (float) (MAX_HEIGHT*0.65), blackpaint);
+			canvas.drawText("Laps", 10, (float) (TOTAL_HEIGHT*0.71), blackpaint);
 			
 			float maxlapdistance = (float) 0.01;
 			for(int q=0;q<laps;q++) {
@@ -97,7 +111,7 @@ public class ResultsView extends View {
 		
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int[] maxt, int[] mint, int max, int min) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -107,12 +121,18 @@ public class ResultsView extends View {
 		width = w;
 		time = ti;
 		
+		max_times = maxt;
+		min_times = mint;
+		num_max_times = max;
+		num_min_times = min;
+		
 		MIN_HEIGHT = h/4;
 		MAX_HEIGHT = h/2;
 		MIN_WIDTH = 50;
 		MAX_WIDTH = w-50;
 		MIN_LAP_HEIGHT = 3*h/4;
 		MAX_LAP_HEIGHT = h;
+		TOTAL_HEIGHT = h;
 	}
 
 }
