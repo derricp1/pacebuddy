@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,22 +21,20 @@ public class ResultActivityTwo extends Activity {
 	int period_time;
 	int[] speeds;
 	
-	final String SAVE_PERIODS = "q";
-	final String SAVE_PERIOD_DISTANCES = "qq";
-	final String SAVE_LAPS = "qqq";
-	final String SAVE_LAP_TIMES = "qqqq";
-	final String SAVE_LAP_DISTANCES = "qqqqq";
-	final String SAVE_TIME = "qqqqqq";
-	final String SAVE_PERIOD_TIME = "qqqqqqq";
-	final String SAVE_SPEEDS = "qqqqqqqq";
+	public final static String SAVE_PERIODS = "SAVE_PERIODS";
+	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
+	public final static String SAVE_LAPS = "SAVE_LAPS";
+	public final static String SAVE_LAP_TIMES = "SAVE_LAP_TIMES";
+	public final static String SAVE_LAP_DISTANCES = "SAVE_LAP_DISTANCES";
+	public final static String SAVE_TIME = "SAVE_TIME";
+	public final static String SAVE_PERIOD_TIME = "SAVE_PERIOD_TIME";
+	public final static String SAVE_SPEEDS = "SAVE_SPEEDS";
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_result_activity_two);
-		
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 		
 		Intent intent = getIntent();
 		
@@ -52,16 +49,17 @@ public class ResultActivityTwo extends Activity {
 			lap_distances = savedInstanceState.getFloatArray(SAVE_LAP_DISTANCES);	
 			time = savedInstanceState.getInt(SAVE_TIME);	
 			period_time = savedInstanceState.getInt(SAVE_PERIOD_TIME);
+			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
 		}
 		else {
-			periods = intent.getIntExtra(ResultsActivity.PERIOD_MESSAGE, 0);
-			period_distances = intent.getFloatArrayExtra(ResultsActivity.PERIOD_DISTANCE_MESSAGE);
-			laps = intent.getIntExtra(ResultsActivity.LAP_MESSAGE, 0);
-			lap_times = intent.getFloatArrayExtra(ResultsActivity.LAP_TIME_MESSAGE);
-			lap_distances = intent.getFloatArrayExtra(ResultsActivity.LAP_DISTANCE_MESSAGE);
-			time = intent.getIntExtra(ResultsActivity.TIME_MESSAGE, 0);
-			period_time = intent.getIntExtra(ResultsActivity.PERIOD_TIME_MESSAGE, 0);
-			speeds = intent.getIntArrayExtra(ResultsActivity.SPEEDS_MESSAGE);
+			periods = intent.getIntExtra(RunActivity.PERIOD_MESSAGE, 0);
+			period_distances = intent.getFloatArrayExtra(RunActivity.PERIOD_DISTANCE_MESSAGE);
+			laps = intent.getIntExtra(RunActivity.LAP_MESSAGE, 0);
+			lap_times = intent.getFloatArrayExtra(RunActivity.LAP_TIME_MESSAGE);
+			lap_distances = intent.getFloatArrayExtra(RunActivity.LAP_DISTANCE_MESSAGE);
+			time = intent.getIntExtra(RunActivity.TIME_MESSAGE, 0);
+			period_time = intent.getIntExtra(RunActivity.PERIOD_TIME_MESSAGE, 0);
+			speeds = intent.getIntArrayExtra(RunActivity.SPEEDS_MESSAGE);
 		}
 		
 		ResultsView2 rv = new ResultsView2(getApplicationContext());
@@ -119,10 +117,24 @@ public class ResultActivityTwo extends Activity {
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		
+		// Always call the superclass so it can save the view hierarchy state
+	    super.onSaveInstanceState(savedInstanceState);
+		
+		savedInstanceState.putInt("SAVE_PERIODS",periods);
+		savedInstanceState.putFloatArray("SAVE_PERIOD_DISTANCES",period_distances);
+		savedInstanceState.putInt("SAVE_LAPS",laps);
+		savedInstanceState.putFloatArray("SAVE_LAP_TIMES",lap_times);
+		savedInstanceState.putFloatArray("SAVE_LAP_DISTANCES",lap_distances);
+		savedInstanceState.putInt("SAVE_TIME",time);
+		savedInstanceState.putInt("SAVE_PERIOD_TIME",period_time);
+		savedInstanceState.putIntArray("SAVE_SPEEDS",speeds);
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
+        	case R.id.action_back:
+        		Goto_Back(this.findViewById(android.R.id.content));
+        		return true;
 	        case R.id.action_return:
 	        	Goto_Return(this.findViewById(android.R.id.content));
 	        	return true;
@@ -131,6 +143,12 @@ public class ResultActivityTwo extends Activity {
 	        	return true;
 	    }
 	    return true;
+	}
+	
+	public void Goto_Back(View view) { //quit
+		Intent resultIntent = new Intent();
+		setResult(2,resultIntent); //don't quit everything
+		finish();	
 	}
 	
 }

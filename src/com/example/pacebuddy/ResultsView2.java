@@ -2,6 +2,7 @@ package com.example.pacebuddy;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -41,58 +42,118 @@ public class ResultsView2 extends View {
 		super(context);
 	}
 	
+	@SuppressLint("DrawAllocation")
 	@Override
 	public void onDraw(Canvas canvas) {
 		
-		ArrayList<Integer> over_periods = new ArrayList<Integer>();
-		ArrayList<Integer> under_periods = new ArrayList<Integer>();
+		ArrayList<Integer> is_over = new ArrayList<Integer>();
+		ArrayList<Integer> is_under = new ArrayList<Integer>();
+
 		boolean over_min = false;
 		
 		for (int i=0;i<periods;i++) {
-			float speed = (period_distances[i]/5280)/(period_time/(3600*1000));
+			float speed = ((float) period_distances[i]/5280)/(((float) period_time/(float) (3600*1000)));
 			if (over_min == false && speed >= speeds[1]) {
 				over_min = true;
 			}
-			if (speed > speeds[0]) {
-				over_periods.add((i+1)*period_time);
-			}
-			else if (over_min == true && speed < speeds[1]) {
-				under_periods.add((i+1)*period_time);
+			
+			if (over_min == true) {
+				
+				if (speed > speeds[0]) {
+					is_over.add(i);
+				}
+				
+				if (speed < speeds[1]) {
+					is_under.add(i);
+				}
+				
 			}
 				
 		}
 		
 		float iheight = 50;
-		if (TOTAL_HEIGHT/(over_periods.size()+2) < 50 || TOTAL_HEIGHT/(under_periods.size()+2) < 50)
-			iheight = Math.min((over_periods.size()+2)/TOTAL_HEIGHT, (under_periods.size()+2)/TOTAL_HEIGHT);
+		if (TOTAL_HEIGHT/(is_over.size()+2) < 50 || TOTAL_HEIGHT/(is_under.size()+2) < 50)
+			iheight = Math.min((is_over.size()+2)/TOTAL_HEIGHT, (is_under.size()+2)/TOTAL_HEIGHT);		
 		
 		blackpaint.setTextSize(Math.max(20,iheight));
 		blackpaint.setColor(Color.BLACK);
 		
 		canvas.drawText("Over Max", 10, iheight, blackpaint);
 		canvas.drawText("Under Min", (MAX_WIDTH+50)/2 + 10, iheight, blackpaint);
-		
-		float currloc = iheight*2;
-		for (int i=0;i<over_periods.size();i++) {
-			
-			int minutes = (int) Math.floor(over_periods.get(i)/60000);
-			int seconds = (int) Math.floor((over_periods.get(i) - (minutes * 60000))/1000);
-			int milliseconds = (int) (over_periods.get(i) - (minutes * 60000) - (1000 * seconds));
-			
-			canvas.drawText(format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, currloc, blackpaint);
-			currloc += iheight;
-		}
-		currloc = iheight*2;
-		for (int i=0;i<under_periods.size();i++) {
-			int minutes = (int) Math.floor(under_periods.get(i)/60000);
-			int seconds = (int) Math.floor((under_periods.get(i) - (minutes * 60000))/1000);
-			int milliseconds = (int) (under_periods.get(i) - (minutes * 60000) - (1000 * seconds));
-			
-			canvas.drawText(format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), 10, currloc, blackpaint);
-			currloc += iheight;
-		}
 
+		canvas = listWriter(is_over, 10, iheight, canvas);
+		canvas = listWriter(is_under, (MAX_WIDTH+50)/2 + 10, iheight, canvas);
 			
+	}
+	
+	public Canvas listWriter(ArrayList<Integer> list, float x, float size, Canvas canvas) {
+		
+		float h = size * 2;
+		
+		int index = 0;
+		int start = -1; //nothing available
+		int end = -1;
+		//boolean endprint = false;
+		
+		while (index < list.size()) {
+			
+			if (start == -1) {
+				start = list.get(index);
+				end = start+1;
+			}
+			else {
+				if (list.get(index) == end) {
+					end += 1;
+				}
+				else {
+					
+					int time = start * period_time;
+					int end_time = end * period_time;
+					int[] bucket = {time,end_time};
+					for(int q=0;q<2;q++) {
+						int minutes = (int) Math.floor(bucket[q]/60000);
+						int seconds = (int) Math.floor((bucket[q] - (minutes * 60000))/1000);
+						int milliseconds = (int) (bucket[q] - (minutes * 60000) - (1000 * seconds));
+						
+						String s = format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds);
+						if (q == 0) {
+							s = s + "-";
+						}
+						canvas.drawText(s, x, h, blackpaint);
+						h += size;						
+					}
+					
+					//print range
+					
+					start = list.get(index);
+					end = start + 1;
+				}
+			}
+			
+			index++;
+			
+		}
+		
+		if (start > 0) {
+			int time = start * period_time;
+			int end_time = end * period_time;
+			int[] bucket = {time,end_time};
+			for(int q=0;q<2;q++) {
+				int minutes = (int) Math.floor(bucket[q]/60000);
+				int seconds = (int) Math.floor((bucket[q] - (minutes * 60000))/1000);
+				int milliseconds = (int) (bucket[q] - (minutes * 60000) - (1000 * seconds));
+				
+				String s = format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds);
+				if (q == 0) {
+					s = s + "-";
+				}
+				canvas.drawText(s, x, h, blackpaint);
+				h += size;						
+			}
+		}
+		
+		return canvas;
+		
 	}
 	
 	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp) {

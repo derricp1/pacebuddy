@@ -74,7 +74,7 @@ public class ResultsView extends View {
 			}
 			
 			for(int i=0;i<periods;i++) {
-				canvas.drawRect(currstart, MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance)), currstart+dividedwidth, MAX_HEIGHT, redpaint);
+				canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+dividedwidth, MAX_HEIGHT, redpaint);
 				currstart += dividedwidth;
 			}
 		
@@ -98,7 +98,7 @@ public class ResultsView extends View {
 			float currstart = MIN_WIDTH;
 			
 			for(int i=0;i<laps;i++) {
-				canvas.drawRect(currstart, MAX_LAP_HEIGHT-((MAX_LAP_HEIGHT-MIN_LAP_HEIGHT)*(lap_distances[i]/maxlapdistance)), currstart+(MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime), MAX_LAP_HEIGHT, redpaint);
+				canvas.drawRect(currstart, Math.min(MAX_LAP_HEIGHT-1,MAX_LAP_HEIGHT-((MAX_LAP_HEIGHT-MIN_LAP_HEIGHT)*(lap_distances[i]/maxlapdistance))), currstart+(MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime), MAX_LAP_HEIGHT, redpaint);
 				currstart += (MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime);
 			}	
 		

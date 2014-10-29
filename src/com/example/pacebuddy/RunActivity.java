@@ -35,6 +35,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	//strings for state saving
 	public final static String SAVE_LAP_TIMES = "SAVE_LAP_TIMES";
 	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
+	public final static String SAVE_LAP_DISTANCES = "SAVE_LAP_DISTANCES";
 	public final static String SAVE_DELAY = "SAVE_DELAY";
 	public final static String SAVE_PERIOD = "SAVE_PERIOD";
 	public final static String SAVE_MAX_SPEED = "SAVE_MAX_SPEED";
@@ -68,7 +69,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	int QUIT_ALL = 0;
 	
 	final int MS = 20;
-	final float QUOTA = (float) 1.4; //minimum accel to count
+	final float QUOTA = (float) 1.3; //minimum accel to count
 	final int NEXT_TICK = 8;
 	
 	int ticks = 0;
@@ -139,6 +140,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		if (savedInstanceState != null) {
 			lap_times = savedInstanceState.getFloatArray(SAVE_LAP_TIMES);
 			period_distances = savedInstanceState.getFloatArray(SAVE_PERIOD_DISTANCES);
+			lap_distances = savedInstanceState.getFloatArray(SAVE_LAP_DISTANCES);
 			delay = savedInstanceState.getInt(SAVE_DELAY);
 			period = savedInstanceState.getInt(SAVE_PERIOD);
 			max_speed = savedInstanceState.getInt(SAVE_MAX_SPEED);
@@ -161,7 +163,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 			periodclock = savedInstanceState.getInt(SAVE_PERIODCLOCK);	
 			ticks = savedInstanceState.getInt(SAVE_TICKS);
 			able = savedInstanceState.getBoolean(SAVE_ABLE);
-
+			laps = savedInstanceState.getInt(SAVE_LAPS);
 		}
 		else {
 			lap_times = new float[5];
@@ -422,7 +424,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	}
 	
 	public float getExtraDist(float pa) {
-		return (float) (0.5 + Math.pow(Math.abs(pa),0.85));
+		return (float) (0.5 + Math.pow(Math.abs(pa),0.9));
 	}
 	
 	public void register_lap(View view) {
@@ -484,6 +486,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 			int[] speeds = {max_speed,min_speed};
 			i.putExtra(SPEEDS_MESSAGE, speeds);
 			
+			timer.cancel();
+			
 			startActivityForResult(i,QUIT_ALL);
 			
 		}
@@ -510,9 +514,13 @@ public class RunActivity extends Activity implements SensorEventListener {
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) { //this is important, rotation happens
-	    
+
+	    // Always call the superclass so it can save the view hierarchy state
+	    super.onSaveInstanceState(savedInstanceState);
+		
 		savedInstanceState.putFloatArray(SAVE_LAP_TIMES, lap_times);
 		savedInstanceState.putFloatArray(SAVE_PERIOD_DISTANCES, period_distances);
+		savedInstanceState.putFloatArray(SAVE_LAP_DISTANCES, lap_distances);
 		savedInstanceState.putInt(SAVE_DELAY, delay);
 		savedInstanceState.putInt(SAVE_PERIOD, period);
 		savedInstanceState.putInt(SAVE_MAX_SPEED, max_speed);
@@ -534,9 +542,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putBoolean(SAVE_INDELAY, indelay);
 		savedInstanceState.putInt(SAVE_PERIODCLOCK, periodclock);	
 		savedInstanceState.putBoolean(SAVE_ABLE, able);
-		
-	    // Always call the superclass so it can save the view hierarchy state
-	    super.onSaveInstanceState(savedInstanceState);
+		savedInstanceState.putInt(SAVE_LAPS, laps);
 	}
 	
 }

@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,24 +31,20 @@ public class ResultsActivity extends Activity {
 	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
 	
-	final String SAVE_PERIODS = "q";
-	final String SAVE_PERIOD_DISTANCES = "qq";
-	final String SAVE_LAPS = "qqq";
-	final String SAVE_LAP_TIMES = "qqqq";
-	final String SAVE_LAP_DISTANCES = "qqqqq";
-	final String SAVE_TIME = "qqqqqq";
-	final String SAVE_PERIOD_TIME = "qqqqqqq";
-	final String SAVE_SPEEDS = "qqqqqqqq";
+	public final static String SAVE_PERIODS = "SAVE_PERIODS";
+	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
+	public final static String SAVE_LAPS = "SAVE_LAPS";
+	public final static String SAVE_LAP_TIMES = "SAVE_LAP_TIMES";
+	public final static String SAVE_LAP_DISTANCES = "SAVE_LAP_DISTANCES";
+	public final static String SAVE_TIME = "SAVE_TIME";
+	public final static String SAVE_PERIOD_TIME = "SAVE_PERIOD_TIME";
+	public final static String SAVE_SPEEDS = "SAVE_SPEEDS";
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_results);
-		
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-		
-		Intent intent = getIntent();
 		
 		int height = getWindowManager().getDefaultDisplay().getHeight();
 		int width = getWindowManager().getDefaultDisplay().getWidth();
@@ -65,6 +60,8 @@ public class ResultsActivity extends Activity {
 			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
 		}
 		else {
+			Intent intent = getIntent();
+			
 			periods = intent.getIntExtra(RunActivity.PERIOD_MESSAGE, 0);
 			period_distances = intent.getFloatArrayExtra(RunActivity.PERIOD_DISTANCE_MESSAGE);
 			laps = intent.getIntExtra(RunActivity.LAP_MESSAGE, 0);
@@ -155,6 +152,18 @@ public class ResultsActivity extends Activity {
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		
+		// Always call the superclass so it can save the view hierarchy state
+	    super.onSaveInstanceState(savedInstanceState);
+	    
+		savedInstanceState.putInt("SAVE_PERIODS",periods);
+		savedInstanceState.putFloatArray("SAVE_PERIOD_DISTANCES",period_distances);
+		savedInstanceState.putInt("SAVE_LAPS",laps);
+		savedInstanceState.putFloatArray("SAVE_LAP_TIMES",lap_times);
+		savedInstanceState.putFloatArray("SAVE_LAP_DISTANCES",lap_distances);
+		savedInstanceState.putInt("SAVE_TIME",time);
+		savedInstanceState.putInt("SAVE_PERIOD_TIME",period_time);
+		savedInstanceState.putIntArray("SAVE_SPEEDS",speeds);	
+		
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -179,11 +188,14 @@ public class ResultsActivity extends Activity {
 	        finish();
 	        System.exit(0);			
 		}
-		else {
+		if (resultCode == 0) {
 			Intent resultIntent = new Intent();
 			setResult(0,resultIntent); //don't quit everything
 			finish();
 	        System.exit(0);
+		}
+		if (resultCode == 2) {
+			//do nothing, wait in this activity
 		}
 	}
 
