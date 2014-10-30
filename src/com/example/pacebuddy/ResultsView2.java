@@ -134,7 +134,7 @@ public class ResultsView2 extends View {
 			
 		}
 		
-		if (start > 0) {
+		if (start > -1) {
 			int time = start * period_time;
 			int end_time = end * period_time;
 			int[] bucket = {time,end_time};

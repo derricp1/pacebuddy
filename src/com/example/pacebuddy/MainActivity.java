@@ -20,11 +20,18 @@ public class MainActivity extends Activity {
 	public final static String PERIOD = "derricp1.apps.MESSAGE2";
 	public final static String MAX_SPEED = "derricp1.apps.MESSAGE3";
 	public final static String MIN_SPEED = "derricp1.apps.MESSAGE4";
+	public final static String AUTOSTOP = "derricp1.apps.MESSAGE5";
 	
-	int delay = 15;
-	int period = 15;
-	int max_speed = 5;
-	int min_speed = 3;
+	public final static String SAVE_DELAY = "SAVE_DELAY";
+	public final static String SAVE_PERIOD = "SAVE_PERIOD";
+	public final static String SAVE_MAX_SPEED = "SAVE_MAX_SPEED";
+	public final static String SAVE_MIN_SPEED = "SAVE_MIN_SPEED";
+	public final static String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
+	
+	int delay;
+	int period;
+	int max_speed;
+	int min_speed;
 
 	int QUIT_ALL = 0;
 	
@@ -38,11 +45,28 @@ public class MainActivity extends Activity {
 	TextView period_text;
 	TextView max_speed_text;
 	TextView min_speed_text;
+	
+	int autostop;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		 super.onCreate(savedInstanceState);
+		 setContentView(R.layout.activity_main);
+		 
+		 if (savedInstanceState != null) {
+			delay = savedInstanceState.getInt(SAVE_DELAY, 0);
+			period = savedInstanceState.getInt(SAVE_PERIOD, 0);
+			max_speed = savedInstanceState.getInt(SAVE_MAX_SPEED, 0);
+			min_speed = savedInstanceState.getInt(SAVE_MIN_SPEED, 0);
+			autostop = savedInstanceState.getInt(SAVE_AUTOSTOP, 0);
+		 }
+		 else {
+			delay = 15;
+			period = 15;
+			max_speed = 5;
+			min_speed = 3;	
+			autostop = 0;
+		 }
 		
 		 myView = this.findViewById(android.R.id.content); //gets view
 		 
@@ -54,10 +78,10 @@ public class MainActivity extends Activity {
 		 delay_bar = (SeekBar) findViewById(R.id.DelayBar);
 		 delay_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 	            public void onStopTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 	            public void onStartTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -73,10 +97,10 @@ public class MainActivity extends Activity {
 		 period_bar = (SeekBar) findViewById(R.id.PeriodBar);
 		 period_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 	            public void onStopTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 	            public void onStartTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -92,10 +116,10 @@ public class MainActivity extends Activity {
 		 max_speed_bar = (SeekBar) findViewById(R.id.MaxSpeedBar);
 		 max_speed_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 	            public void onStopTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 	            public void onStartTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -111,10 +135,10 @@ public class MainActivity extends Activity {
 		 min_speed_bar = (SeekBar) findViewById(R.id.MinSpeedBar);
 		 min_speed_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 	            public void onStopTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 	            public void onStartTrackingTouch(SeekBar seekBar) {
-
+	
 	            }
 				@Override
 				public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -126,6 +150,11 @@ public class MainActivity extends Activity {
 					
 				}			
 			});
+		 
+		 delay_bar.setProgress(delay);
+		 period_bar.setProgress(period);
+		 max_speed_bar.setProgress(max_speed);
+		 min_speed_bar.setProgress(min_speed);
 		 
 	}
 	
@@ -146,6 +175,7 @@ public class MainActivity extends Activity {
 			i.putExtra(PERIOD, period);
 			i.putExtra(MAX_SPEED, max_speed);
 			i.putExtra(MIN_SPEED, min_speed);
+			i.putExtra(AUTOSTOP, autostop);
 			
 			startActivityForResult(i,QUIT_ALL);
 		
@@ -157,12 +187,23 @@ public class MainActivity extends Activity {
 	        finish();
 	        System.exit(0);			
 		}
-		else {
-			delay_bar.setProgress(delay);
-			period_bar.setProgress(period);
-			max_speed_bar.setProgress(max_speed);
-			min_speed_bar.setProgress(min_speed);
+		if (resultCode == 0) {
+			//do nothing, drop to defaults
 		}
+		if (resultCode == 3) {
+	        autostop = data.getIntExtra(OptionsActivity.AUTOSTOP_MESSAGE, 0);	
+	        //stay here afterwards
+		}
+
+		delay_text.setText("Delay: " + delay + " seconds");
+		period_text.setText("Period: " + period + " seconds");
+		max_speed_text.setText("Max Speed: " + max_speed + " MPH");
+		min_speed_text.setText("Min Speed: " + min_speed + " MPH");
+		
+		delay_bar.setProgress(delay);
+		period_bar.setProgress(period);
+		max_speed_bar.setProgress(max_speed);
+		min_speed_bar.setProgress(min_speed);
 	}
 	
 	@Override
@@ -173,7 +214,8 @@ public class MainActivity extends Activity {
 	}
 	
 	public void Goto_Settings(View view) {
-		
+		Intent i = new Intent(this, OptionsActivity.class);
+		startActivityForResult(i,QUIT_ALL);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -197,6 +239,7 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.action_settings:
+	        	Goto_Settings(this.findViewById(android.R.id.content));
 	        	return true;
 	        case R.id.action_about:
 	        	return true;
@@ -204,6 +247,19 @@ public class MainActivity extends Activity {
 	        	Goto_Quit(this.findViewById(android.R.id.content));
 	    }
 	    return true;
+	}
+	
+	public void onSaveInstanceState(Bundle savedInstanceState) { //this is important, rotation happens
+
+	    // Always call the superclass so it can save the view hierarchy state
+	    super.onSaveInstanceState(savedInstanceState);
+	    
+	    savedInstanceState.putInt(SAVE_AUTOSTOP, autostop);
+	    savedInstanceState.putInt(SAVE_DELAY, delay);
+	    savedInstanceState.putInt(SAVE_PERIOD, period);
+	    savedInstanceState.putInt(SAVE_MAX_SPEED, max_speed);
+	    savedInstanceState.putInt(SAVE_MIN_SPEED, min_speed);
+	    
 	}
 
 }

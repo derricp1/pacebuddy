@@ -9,8 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-
-public class ResultActivityTwo extends Activity {
+public class ResultActivityThree extends Activity {
 	
 	int QUIT_ALL;
 	
@@ -40,12 +39,12 @@ public class ResultActivityTwo extends Activity {
 	public final static String SAVE_TIME = "SAVE_TIME";
 	public final static String SAVE_PERIOD_TIME = "SAVE_PERIOD_TIME";
 	public final static String SAVE_SPEEDS = "SAVE_SPEEDS";
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_result_activity_two);
+		setContentView(R.layout.activity_result_activity_three);
 		
 		Intent intent = getIntent();
 		
@@ -63,25 +62,26 @@ public class ResultActivityTwo extends Activity {
 			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
 		}
 		else {
-			periods = intent.getIntExtra(ResultsActivity.PERIOD_MESSAGE, 0);
-			period_distances = intent.getFloatArrayExtra(ResultsActivity.PERIOD_DISTANCE_MESSAGE);
-			laps = intent.getIntExtra(ResultsActivity.LAP_MESSAGE, 0);
-			lap_times = intent.getFloatArrayExtra(ResultsActivity.LAP_TIME_MESSAGE);
-			lap_distances = intent.getFloatArrayExtra(ResultsActivity.LAP_DISTANCE_MESSAGE);
-			time = intent.getIntExtra(ResultsActivity.TIME_MESSAGE, 0);
-			period_time = intent.getIntExtra(ResultsActivity.PERIOD_TIME_MESSAGE, 0);
-			speeds = intent.getIntArrayExtra(ResultsActivity.SPEEDS_MESSAGE);
+			periods = intent.getIntExtra(ResultActivityTwo.PERIOD_MESSAGE, 0);
+			period_distances = intent.getFloatArrayExtra(ResultActivityTwo.PERIOD_DISTANCE_MESSAGE);
+			laps = intent.getIntExtra(ResultActivityTwo.LAP_MESSAGE, 0);
+			lap_times = intent.getFloatArrayExtra(ResultActivityTwo.LAP_TIME_MESSAGE);
+			lap_distances = intent.getFloatArrayExtra(ResultActivityTwo.LAP_DISTANCE_MESSAGE);
+			time = intent.getIntExtra(ResultActivityTwo.TIME_MESSAGE, 0);
+			period_time = intent.getIntExtra(ResultActivityTwo.PERIOD_TIME_MESSAGE, 0);
+			speeds = intent.getIntArrayExtra(ResultActivityTwo.SPEEDS_MESSAGE);
 		}
 		
-		ResultsView2 rv = new ResultsView2(getApplicationContext());
+		ResultsView3 rv = new ResultsView3(getApplicationContext());
 		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds);
-		setContentView(rv);			
+		setContentView(rv);
+		
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.result_activity_two, menu);
+		getMenuInflater().inflate(R.menu.result_activity_three, menu);
 		return true;
 	}
 	
@@ -143,9 +143,6 @@ public class ResultActivityTwo extends Activity {
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
-    		case R.id.action_next:
-    			Goto_Next(this.findViewById(android.R.id.content));
-    			return true;
         	case R.id.action_back:
         		Goto_Back(this.findViewById(android.R.id.content));
         		return true;
@@ -167,7 +164,7 @@ public class ResultActivityTwo extends Activity {
 	
 	public void Goto_Next(View view) { //next
 		
-		Intent i = new Intent(this, ResultActivityThree.class);
+		Intent i = new Intent(this, ResultActivityTwo.class);
 		
 		i.putExtra(PERIOD_MESSAGE, periods);
 		i.putExtra(PERIOD_DISTANCE_MESSAGE, period_distances);
@@ -181,24 +178,5 @@ public class ResultActivityTwo extends Activity {
 		startActivityForResult(i, QUIT_ALL);		
 
 	}
-	
-	protected void onActivityResult (int requestCode, int resultCode, Intent data) {
-		if (resultCode == 1) {
-	        Intent resultIntent = new Intent();
-	        setResult(1,resultIntent); //quit everything
-	        finish();
-	        System.exit(0);			
-		}
-		if (resultCode == 0) {
-			Intent resultIntent = new Intent();
-			setResult(0,resultIntent); //don't quit everything
-			finish();
-	        System.exit(0);
-		}
-		if (resultCode == 2) {
-			//do nothing, wait in this activity
-		}
-	}
-	
-}
 
+}

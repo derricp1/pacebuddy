@@ -33,6 +33,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
 	
 	//strings for state saving
+	public final static String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
+	public final static String SAVE_AUTOSTOPTIMER = "SAVE_AUTOSTOPTIMER";
 	public final static String SAVE_LAP_TIMES = "SAVE_LAP_TIMES";
 	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
 	public final static String SAVE_LAP_DISTANCES = "SAVE_LAP_DISTANCES";
@@ -126,6 +128,9 @@ public class RunActivity extends Activity implements SensorEventListener {
 	float lapdistance;
 	int lap_limit;
 	
+	int autostop;
+	int autostoptimer;
+	
 	boolean canstart = false;
 
 	@Override
@@ -164,6 +169,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 			ticks = savedInstanceState.getInt(SAVE_TICKS);
 			able = savedInstanceState.getBoolean(SAVE_ABLE);
 			laps = savedInstanceState.getInt(SAVE_LAPS);
+			autostop = savedInstanceState.getInt(SAVE_AUTOSTOP);
+			autostoptimer = savedInstanceState.getInt(SAVE_AUTOSTOPTIMER);
 		}
 		else {
 			lap_times = new float[5];
@@ -197,6 +204,9 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	
 	    	ticks = 0;
 	    	able = true;
+	    	
+	    	autostop = 1000 * intent.getIntExtra(MainActivity.AUTOSTOP, 0);
+	    	autostoptimer = 0;
 	    	
 		}
 		
@@ -297,6 +307,11 @@ public class RunActivity extends Activity implements SensorEventListener {
 			
 			if (indelay == false) {
 				
+				autostoptimer += MS;
+				if (autostop > 0 && autostoptimer > autostop) { //0 = off
+					autostop();
+				}
+				
 				if (ticks > 0)
 					ticks--;
 				
@@ -383,6 +398,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	          if (able == true) {
 		          if (pastaccel > curraccel && lastchange == 1) { //was increasing, now slowing
 		        	  if (Math.abs(pastaccel) > QUOTA) {
+		        		  autostoptimer = 0;
 		        		  ticks = NEXT_TICK;
 		        		  float d = getExtraDist(pastaccel);
 		        		  distance += d;
@@ -392,6 +408,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		          }
 		          if (pastaccel < curraccel && lastchange == -1) { //was slowing, now increasing
 		        	  if (Math.abs(pastaccel) > QUOTA) {
+		        		  autostoptimer = 0;
 		        		  ticks = NEXT_TICK;
 		        		  float d = getExtraDist(pastaccel);
 		        		  distance += d;
@@ -424,12 +441,12 @@ public class RunActivity extends Activity implements SensorEventListener {
 	}
 	
 	public float getExtraDist(float pa) {
-		return (float) (0.5 + Math.pow(Math.abs(pa),0.9));
+		return (float) (0.5 + Math.pow(Math.abs(pa),0.93));
 	}
 	
 	public void register_lap(View view) {
 		if (!indelay) { //should only operate when moving in proper time
-			lap_times[laps] = lapclock/1000; //seconds from MS
+			lap_times[laps] = lapclock; //seconds from MS
 			lap_distances[laps] = lapdistance;
 			
 			laps++;
@@ -449,7 +466,9 @@ public class RunActivity extends Activity implements SensorEventListener {
 		//add the final period and lap
 		if (!indelay) { //should only operate when moving in proper time
 			
-			lap_times[laps] = lapclock/1000; //seconds from MS
+			autostop();
+			
+			/*lap_times[laps] = lapclock; //seconds from MS
 			lap_distances[laps] = lapdistance;
 			
 			laps++;
@@ -488,7 +507,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 			
 			timer.cancel();
 			
-			startActivityForResult(i,QUIT_ALL);
+			startActivityForResult(i,QUIT_ALL);*/
 			
 		}
 		else {
@@ -510,6 +529,49 @@ public class RunActivity extends Activity implements SensorEventListener {
 			finish();
 	        System.exit(0);
 		}
+	}
+	
+	public void autostop() {
+		lap_times[laps] = lapclock; //seconds from MS
+		lap_distances[laps] = lapdistance;
+		
+		laps++;
+		lapclock = 0;
+		lapdistance = 0;
+		
+		if (laps == lap_limit) {
+			lap_limit *= 2;
+			lap_times = Arrays.copyOf(lap_times,lap_limit);
+			lap_distances = Arrays.copyOf(lap_distances,lap_limit);
+		}
+		
+		period_distances[periods] = perioddistance;
+		perioddistance = 0;
+		
+		periodclock = 0;
+		periods++;
+		
+		if (periods == period_limit) {
+			period_limit *= 2;
+			period_distances = Arrays.copyOf(period_distances, period_limit); 
+		}			
+		
+		Intent i = new Intent(this, ResultsActivity.class);
+		
+		i.putExtra(PERIOD_MESSAGE, periods);
+		i.putExtra(PERIOD_DISTANCE_MESSAGE, period_distances);
+		i.putExtra(LAP_MESSAGE, laps);
+		i.putExtra(LAP_TIME_MESSAGE, lap_times);
+		i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
+		i.putExtra(TIME_MESSAGE, (centiseconds + 100 * seconds + 6000 * minutes));
+		i.putExtra(PERIOD_TIME_MESSAGE, period);
+		
+		int[] speeds = {max_speed,min_speed};
+		i.putExtra(SPEEDS_MESSAGE, speeds);
+		
+		timer.cancel();
+		
+		startActivityForResult(i,QUIT_ALL);
 	}
 	
 	@Override
@@ -543,6 +605,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putInt(SAVE_PERIODCLOCK, periodclock);	
 		savedInstanceState.putBoolean(SAVE_ABLE, able);
 		savedInstanceState.putInt(SAVE_LAPS, laps);
+		savedInstanceState.putInt(SAVE_AUTOSTOP, autostop);
+		savedInstanceState.putInt(SAVE_AUTOSTOPTIMER, autostoptimer);
 	}
 	
 }

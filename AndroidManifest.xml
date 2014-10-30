@@ -34,6 +34,14 @@
             android:name="com.example.pacebuddy.ResultActivityTwo"
             android:label="@string/title_activity_result_activity_two" >
         </activity>
+        <activity
+            android:name="com.example.pacebuddy.ResultActivityThree"
+            android:label="@string/title_activity_result_activity_three" >
+        </activity>
+        <activity
+            android:name="com.example.pacebuddy.OptionsActivity"
+            android:label="@string/title_activity_options" >
+        </activity>
     </application>
 
 </manifest>

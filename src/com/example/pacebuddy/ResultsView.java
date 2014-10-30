@@ -29,6 +29,8 @@ public class ResultsView extends View {
 	
 	Paint redpaint = new Paint(Color.RED);
 	Paint blackpaint = new Paint(Color.BLACK);
+	Paint greenpaint = new Paint(Color.GREEN);
+	Paint yellowpaint = new Paint(Color.YELLOW);
 	
 	
 	DecimalFormat format = new DecimalFormat("00");
@@ -44,6 +46,8 @@ public class ResultsView extends View {
 		blackpaint.setTextSize(50);
 		blackpaint.setColor(Color.BLACK);
 		redpaint.setColor(Color.RED);
+		yellowpaint.setColor(Color.YELLOW);
+		greenpaint.setColor(Color.GREEN);
 		
 		float totaldistance = 0;
 		for (int i=0; i<periods; i++)
@@ -83,7 +87,7 @@ public class ResultsView extends View {
 		//laps
 		if (laps > 1) {
 			
-			canvas.drawText("Laps", 10, (float) (TOTAL_HEIGHT*0.71), blackpaint);
+			canvas.drawText("Laps", 10, (float) (TOTAL_HEIGHT*0.61), blackpaint);
 			
 			float maxlapdistance = (float) 0.01;
 			for(int q=0;q<laps;q++) {
@@ -98,8 +102,8 @@ public class ResultsView extends View {
 			float currstart = MIN_WIDTH;
 			
 			for(int i=0;i<laps;i++) {
-				canvas.drawRect(currstart, Math.min(MAX_LAP_HEIGHT-1,MAX_LAP_HEIGHT-((MAX_LAP_HEIGHT-MIN_LAP_HEIGHT)*(lap_distances[i]/maxlapdistance))), currstart+(MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime), MAX_LAP_HEIGHT, redpaint);
-				currstart += (MAX_WIDTH-MAX_HEIGHT)*(lap_times[i]/totallaptime);
+				canvas.drawRect(currstart, Math.min(MAX_LAP_HEIGHT-1,MAX_LAP_HEIGHT-((MAX_LAP_HEIGHT-MIN_LAP_HEIGHT)*(lap_distances[i]/maxlapdistance))), currstart+(MAX_WIDTH-MIN_WIDTH)*(lap_times[i]/totallaptime), MAX_LAP_HEIGHT, redpaint);
+				currstart += (MAX_WIDTH-MIN_WIDTH)*(lap_times[i]/totallaptime);
 			}	
 		
 		}
@@ -120,7 +124,7 @@ public class ResultsView extends View {
 		MAX_HEIGHT = h/2;
 		MIN_WIDTH = 50;
 		MAX_WIDTH = w-50;
-		MIN_LAP_HEIGHT = 3*h/4;
+		MIN_LAP_HEIGHT = 2*h/3;
 		MAX_LAP_HEIGHT = h;
 		TOTAL_HEIGHT = h;
 	}
