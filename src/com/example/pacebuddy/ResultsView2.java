@@ -31,7 +31,6 @@ public class ResultsView2 extends View {
 	
 	int TOTAL_HEIGHT;
 	
-	Paint redpaint = new Paint(Color.RED);
 	Paint blackpaint = new Paint(Color.BLACK);
 	
 	

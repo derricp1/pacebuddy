@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -15,12 +16,17 @@ import android.widget.TextView;
 public class OptionsActivity extends Activity {
 	
 	public static final String AUTOSTOP_MESSAGE = "AUTOSTOP_MESSAGE";
+	public static final String COLOR_MESSAGE = "COLOR_MESSAGE";
 	
 	public static final String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
+	public static final String SAVE_COLOR = "SAVE_COLOR";
 	
 	int autostop;
 	TextView autostop_text;
 	SeekBar autostopbar;
+	int color;
+	
+	RadioButton[] buttons;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,31 @@ public class OptionsActivity extends Activity {
 		
 		autostopbar = (SeekBar) findViewById(R.id.AutoStopBar);
 		autostop_text = (TextView) findViewById(R.id.AutoStopText);
+		
+		buttons = new RadioButton[7];
+		
+		buttons[0] = (RadioButton) findViewById(R.id.radio0);
+		buttons[1] = (RadioButton) findViewById(R.id.radio1);
+		buttons[2] = (RadioButton) findViewById(R.id.radio2);
+		buttons[3] = (RadioButton) findViewById(R.id.radio3);
+		buttons[4] = (RadioButton) findViewById(R.id.radio4);
+		buttons[5] = (RadioButton) findViewById(R.id.radio5);
+		buttons[6] = (RadioButton) findViewById(R.id.radio6);
+		
+		if (savedInstanceState != null) {
+			for(int i=0;i<7;i++) {
+				buttons[i].setChecked(false);
+			}
+			color = savedInstanceState.getInt(SAVE_COLOR);
+			buttons[color].setChecked(true);
+		}
+		else {
+			color = 0;
+			buttons[0].setChecked(true);
+			for(int i=1;i<7;i++) {
+				buttons[i].setChecked(false);
+			}
+		}
 		
 		autostopbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -80,9 +111,17 @@ public class OptionsActivity extends Activity {
 	}
 	
 	public void Goto_Return(View view) { //return
-		Intent i = new Intent();
-		i.putExtra("AUTOSTOP_MESSAGE", autostop);
-		setResult(3,i); //quit
+		Intent in = new Intent();
+
+		for(int i=0;i<7;i++) {
+			if (buttons[i].isChecked() == true) {
+				color = i;
+			}
+		}		
+		
+		in.putExtra("AUTOSTOP_MESSAGE", autostop);
+		in.putExtra("COLOR_MESSAGE", color);
+		setResult(3,in); //quit
         finish();
 	}
 	
@@ -112,6 +151,13 @@ public class OptionsActivity extends Activity {
 	    // Always call the superclass so it can save the view hierarchy state
 	    super.onSaveInstanceState(savedInstanceState);
 		savedInstanceState.putInt(SAVE_AUTOSTOP, autostop);
+		
+		for(int i=0;i<7;i++) {
+			if (buttons[i].isChecked() == true) {
+				color = i;
+			}
+		}
+		savedInstanceState.putInt(SAVE_COLOR, color);
 		
 	}
 

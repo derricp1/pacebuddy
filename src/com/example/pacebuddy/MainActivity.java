@@ -21,17 +21,20 @@ public class MainActivity extends Activity {
 	public final static String MAX_SPEED = "derricp1.apps.MESSAGE3";
 	public final static String MIN_SPEED = "derricp1.apps.MESSAGE4";
 	public final static String AUTOSTOP = "derricp1.apps.MESSAGE5";
+	public final static String COLOR = "derricp1.apps.MESSAGE6";
 	
 	public final static String SAVE_DELAY = "SAVE_DELAY";
 	public final static String SAVE_PERIOD = "SAVE_PERIOD";
 	public final static String SAVE_MAX_SPEED = "SAVE_MAX_SPEED";
 	public final static String SAVE_MIN_SPEED = "SAVE_MIN_SPEED";
 	public final static String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
+	public final static String SAVE_COLOR = "SAVE_COLOR";
 	
 	int delay;
 	int period;
 	int max_speed;
 	int min_speed;
+	int color;
 
 	int QUIT_ALL = 0;
 	
@@ -59,6 +62,7 @@ public class MainActivity extends Activity {
 			max_speed = savedInstanceState.getInt(SAVE_MAX_SPEED, 0);
 			min_speed = savedInstanceState.getInt(SAVE_MIN_SPEED, 0);
 			autostop = savedInstanceState.getInt(SAVE_AUTOSTOP, 0);
+			color = savedInstanceState.getInt(SAVE_COLOR, 0);
 		 }
 		 else {
 			delay = 15;
@@ -66,6 +70,7 @@ public class MainActivity extends Activity {
 			max_speed = 5;
 			min_speed = 3;	
 			autostop = 0;
+			color = 0;
 		 }
 		
 		 myView = this.findViewById(android.R.id.content); //gets view
@@ -176,6 +181,7 @@ public class MainActivity extends Activity {
 			i.putExtra(MAX_SPEED, max_speed);
 			i.putExtra(MIN_SPEED, min_speed);
 			i.putExtra(AUTOSTOP, autostop);
+			i.putExtra(COLOR, color);
 			
 			startActivityForResult(i,QUIT_ALL);
 		
@@ -192,6 +198,7 @@ public class MainActivity extends Activity {
 		}
 		if (resultCode == 3) {
 	        autostop = data.getIntExtra(OptionsActivity.AUTOSTOP_MESSAGE, 0);	
+	        color = data.getIntExtra(OptionsActivity.COLOR_MESSAGE, 0);
 	        //stay here afterwards
 		}
 
@@ -259,6 +266,7 @@ public class MainActivity extends Activity {
 	    savedInstanceState.putInt(SAVE_PERIOD, period);
 	    savedInstanceState.putInt(SAVE_MAX_SPEED, max_speed);
 	    savedInstanceState.putInt(SAVE_MIN_SPEED, min_speed);
+	    savedInstanceState.putInt(SAVE_COLOR, color);
 	    
 	}
 

@@ -21,6 +21,7 @@ public class ResultsActivity extends Activity {
 	int time;
 	int period_time;
 	int[] speeds;
+	int color;
 	
 	public final static String PERIOD_MESSAGE = "derricp1.apps.RMESSAGE";
 	public final static String PERIOD_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE2";
@@ -30,6 +31,7 @@ public class ResultsActivity extends Activity {
 	public final static String TIME_MESSAGE = "derricp1.apps.RMESSAGE6";
 	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
+	public final static String COLOR_MESSAGE = "derricp1.apps.RMESSAGE9";
 	
 	public final static String SAVE_PERIODS = "SAVE_PERIODS";
 	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
@@ -39,6 +41,7 @@ public class ResultsActivity extends Activity {
 	public final static String SAVE_TIME = "SAVE_TIME";
 	public final static String SAVE_PERIOD_TIME = "SAVE_PERIOD_TIME";
 	public final static String SAVE_SPEEDS = "SAVE_SPEEDS";
+	public final static String SAVE_COLOR = "SAVE_COLOR";
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -58,6 +61,7 @@ public class ResultsActivity extends Activity {
 			time = savedInstanceState.getInt(SAVE_TIME);	
 			period_time = savedInstanceState.getInt(SAVE_PERIOD_TIME);
 			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
+			color = savedInstanceState.getInt(SAVE_COLOR);
 		}
 		else {
 			Intent intent = getIntent();
@@ -70,13 +74,14 @@ public class ResultsActivity extends Activity {
 			time = intent.getIntExtra(RunActivity.TIME_MESSAGE, 0);
 			period_time = intent.getIntExtra(RunActivity.PERIOD_TIME_MESSAGE, 0);
 			speeds = intent.getIntArrayExtra(RunActivity.SPEEDS_MESSAGE);
+			color = intent.getIntExtra(RunActivity.COLOR_MESSAGE,0);
 		}
 		
 		//ResultsView rv = (ResultsView) findViewById(R.id.results);
 		//rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width);
 		
 		ResultsView rv = new ResultsView(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time);
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, color, period_time, speeds);
 		
 		//hv.addView(rv);
 		//sv.addView(hv);
@@ -104,6 +109,7 @@ public class ResultsActivity extends Activity {
 		i.putExtra(TIME_MESSAGE, time);
 		i.putExtra(PERIOD_TIME_MESSAGE, period_time);
 		i.putExtra(SPEEDS_MESSAGE, speeds);
+		i.putExtra(COLOR_MESSAGE, color);
 		
 		startActivityForResult(i, QUIT_ALL);		
 
@@ -163,6 +169,7 @@ public class ResultsActivity extends Activity {
 		savedInstanceState.putInt("SAVE_TIME",time);
 		savedInstanceState.putInt("SAVE_PERIOD_TIME",period_time);
 		savedInstanceState.putIntArray("SAVE_SPEEDS",speeds);	
+		savedInstanceState.putInt("SAVE_COLOR",color);
 		
 	}
 	

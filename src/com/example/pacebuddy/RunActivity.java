@@ -31,6 +31,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String TIME_MESSAGE = "derricp1.apps.RMESSAGE6";
 	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
+	public final static String COLOR_MESSAGE = "derricp1.apps.RMESSAGE9";
 	
 	//strings for state saving
 	public final static String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
@@ -67,11 +68,14 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SAVE_LAST_PERIOD_SPEED = "SAVE_LAST_PERIOD_SPEED";
 	public final static String SAVE_NUM_MAX_TIMES = "SAVE_NUM_MAX_TIMES";
 	public final static String SAVE_NUM_MIN_TIMES = "SAVE_NUM_MIN_TIMES";
+	public final static String SAVE_COLOR = "SAVE_COLOR";
 	
 	int QUIT_ALL = 0;
 	
+	int color;
+	
 	final int MS = 20;
-	final float QUOTA = (float) 1.3; //minimum accel to count
+	final float QUOTA = (float) 1.25; //minimum accel to count
 	final int NEXT_TICK = 8;
 	
 	int ticks = 0;
@@ -171,6 +175,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 			laps = savedInstanceState.getInt(SAVE_LAPS);
 			autostop = savedInstanceState.getInt(SAVE_AUTOSTOP);
 			autostoptimer = savedInstanceState.getInt(SAVE_AUTOSTOPTIMER);
+			color = savedInstanceState.getInt(SAVE_COLOR);
 		}
 		else {
 			lap_times = new float[5];
@@ -207,6 +212,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	
 	    	autostop = 1000 * intent.getIntExtra(MainActivity.AUTOSTOP, 0);
 	    	autostoptimer = 0;
+	    	color = intent.getIntExtra(MainActivity.COLOR, 0);
 	    	
 		}
 		
@@ -464,51 +470,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public void finish_run(View view) { //advance to results
 		
 		//add the final period and lap
-		if (!indelay) { //should only operate when moving in proper time
-			
+		if (!indelay) { //should only operate when moving in proper time		
 			autostop();
-			
-			/*lap_times[laps] = lapclock; //seconds from MS
-			lap_distances[laps] = lapdistance;
-			
-			laps++;
-			lapclock = 0;
-			lapdistance = 0;
-			
-			if (laps == lap_limit) {
-				lap_limit *= 2;
-				lap_times = Arrays.copyOf(lap_times,lap_limit);
-				lap_distances = Arrays.copyOf(lap_distances,lap_limit);
-			}
-			
-			period_distances[periods] = perioddistance;
-			perioddistance = 0;
-			
-			periodclock = 0;
-			periods++;
-			
-			if (periods == period_limit) {
-				period_limit *= 2;
-				period_distances = Arrays.copyOf(period_distances, period_limit); 
-			}			
-			
-			Intent i = new Intent(this, ResultsActivity.class);
-			
-			i.putExtra(PERIOD_MESSAGE, periods);
-			i.putExtra(PERIOD_DISTANCE_MESSAGE, period_distances);
-			i.putExtra(LAP_MESSAGE, laps);
-			i.putExtra(LAP_TIME_MESSAGE, lap_times);
-			i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
-			i.putExtra(TIME_MESSAGE, (centiseconds + 100 * seconds + 6000 * minutes));
-			i.putExtra(PERIOD_TIME_MESSAGE, period);
-			
-			int[] speeds = {max_speed,min_speed};
-			i.putExtra(SPEEDS_MESSAGE, speeds);
-			
-			timer.cancel();
-			
-			startActivityForResult(i,QUIT_ALL);*/
-			
 		}
 		else {
 			Goto_Return(view);
@@ -565,6 +528,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		i.putExtra(LAP_DISTANCE_MESSAGE, lap_distances);
 		i.putExtra(TIME_MESSAGE, (centiseconds + 100 * seconds + 6000 * minutes));
 		i.putExtra(PERIOD_TIME_MESSAGE, period);
+		i.putExtra(COLOR_MESSAGE, color);
 		
 		int[] speeds = {max_speed,min_speed};
 		i.putExtra(SPEEDS_MESSAGE, speeds);
@@ -607,6 +571,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putInt(SAVE_LAPS, laps);
 		savedInstanceState.putInt(SAVE_AUTOSTOP, autostop);
 		savedInstanceState.putInt(SAVE_AUTOSTOPTIMER, autostoptimer);
+		savedInstanceState.putInt(SAVE_COLOR, color);
 	}
 	
 }

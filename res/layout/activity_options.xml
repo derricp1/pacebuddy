@@ -19,24 +19,77 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+
+            <SeekBar
+                android:id="@+id/AutoStopBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="60dp"
+                android:max="300"
+                android:progress="0" />
+
+            <TextView
+                android:id="@+id/AutoStopText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="AutoStop: Off"
+                android:textSize="24sp" />
             
-		    <SeekBar
-		        android:id="@+id/AutoStopBar"
-		        android:layout_width="match_parent"
+		    <RadioGroup
+		        android:id="@+id/radioGroup1"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentLeft="true"
-		        android:layout_alignParentTop="true"
-		        android:max="300"
-		        android:progress="0"
-		        android:layout_marginTop="60dp" />
-
-		    <TextView
-		        android:id="@+id/AutoStopText"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:text="AutoStop: Off"
-		        android:textSize="24sp" />
-
+		        android:layout_centerVertical="true"
+		        android:paddingTop="50sp" >
+		
+		        <RadioButton
+		            android:id="@+id/radio0"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:checked="true"
+		            android:text="@string/color_red" />
+		
+		        <RadioButton
+		            android:id="@+id/radio1"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/color_gray" />
+		
+		        <RadioButton
+		            android:id="@+id/radio2"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/color_yellow" />
+		        
+		        <RadioButton
+		            android:id="@+id/radio3"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/color_green" />
+		
+		        <RadioButton
+		            android:id="@+id/radio4"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/color_blue" />
+		
+		        <RadioButton
+		            android:id="@+id/radio5"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/color_magenta" />
+		        
+		        <RadioButton
+		            android:id="@+id/radio6"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="@string/color_black" />
+		    </RadioGroup>            
+            
         </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>

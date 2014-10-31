@@ -22,6 +22,8 @@ public class ResultActivityThree extends Activity {
 	int period_time;
 	int[] speeds;
 	
+	int color;
+	
 	public final static String PERIOD_MESSAGE = "derricp1.apps.RMESSAGE";
 	public final static String PERIOD_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE2";
 	public final static String LAP_MESSAGE = "derricp1.apps.RMESSAGE3";
@@ -30,6 +32,7 @@ public class ResultActivityThree extends Activity {
 	public final static String TIME_MESSAGE = "derricp1.apps.RMESSAGE6";
 	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
+	public final static String COLOR_MESSAGE = "derricp1.apps.RMESSAGE9";
 	
 	public final static String SAVE_PERIODS = "SAVE_PERIODS";
 	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
@@ -39,6 +42,7 @@ public class ResultActivityThree extends Activity {
 	public final static String SAVE_TIME = "SAVE_TIME";
 	public final static String SAVE_PERIOD_TIME = "SAVE_PERIOD_TIME";
 	public final static String SAVE_SPEEDS = "SAVE_SPEEDS";
+	public final static String SAVE_COLOR = "SAVE_COLOR";
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -60,6 +64,7 @@ public class ResultActivityThree extends Activity {
 			time = savedInstanceState.getInt(SAVE_TIME);	
 			period_time = savedInstanceState.getInt(SAVE_PERIOD_TIME);
 			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
+			color = savedInstanceState.getInt(SAVE_COLOR);
 		}
 		else {
 			periods = intent.getIntExtra(ResultActivityTwo.PERIOD_MESSAGE, 0);
@@ -70,6 +75,7 @@ public class ResultActivityThree extends Activity {
 			time = intent.getIntExtra(ResultActivityTwo.TIME_MESSAGE, 0);
 			period_time = intent.getIntExtra(ResultActivityTwo.PERIOD_TIME_MESSAGE, 0);
 			speeds = intent.getIntArrayExtra(ResultActivityTwo.SPEEDS_MESSAGE);
+			color = intent.getIntExtra(ResultActivityTwo.COLOR_MESSAGE,0);
 		}
 		
 		ResultsView3 rv = new ResultsView3(getApplicationContext());
@@ -139,6 +145,7 @@ public class ResultActivityThree extends Activity {
 		savedInstanceState.putInt("SAVE_TIME",time);
 		savedInstanceState.putInt("SAVE_PERIOD_TIME",period_time);
 		savedInstanceState.putIntArray("SAVE_SPEEDS",speeds);
+		savedInstanceState.putInt("SAVE_COLOR",color);
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -164,7 +171,7 @@ public class ResultActivityThree extends Activity {
 	
 	public void Goto_Next(View view) { //next
 		
-		Intent i = new Intent(this, ResultActivityTwo.class);
+		Intent i = new Intent(this, ResultActivityTwo.class); //technically speaking this can't be reached now so change this if needed
 		
 		i.putExtra(PERIOD_MESSAGE, periods);
 		i.putExtra(PERIOD_DISTANCE_MESSAGE, period_distances);
@@ -174,6 +181,7 @@ public class ResultActivityThree extends Activity {
 		i.putExtra(TIME_MESSAGE, time);
 		i.putExtra(PERIOD_TIME_MESSAGE, period_time);
 		i.putExtra(SPEEDS_MESSAGE, speeds);
+		i.putExtra(COLOR_MESSAGE, color);
 		
 		startActivityForResult(i, QUIT_ALL);		
 

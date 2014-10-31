@@ -22,6 +22,7 @@ public class ResultActivityTwo extends Activity {
 	int time;
 	int period_time;
 	int[] speeds;
+	int color;
 	
 	public final static String PERIOD_MESSAGE = "derricp1.apps.RMESSAGE";
 	public final static String PERIOD_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE2";
@@ -31,6 +32,7 @@ public class ResultActivityTwo extends Activity {
 	public final static String TIME_MESSAGE = "derricp1.apps.RMESSAGE6";
 	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
+	public final static String COLOR_MESSAGE = "derricp1.apps.RMESSAGE9";
 	
 	public final static String SAVE_PERIODS = "SAVE_PERIODS";
 	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
@@ -40,6 +42,7 @@ public class ResultActivityTwo extends Activity {
 	public final static String SAVE_TIME = "SAVE_TIME";
 	public final static String SAVE_PERIOD_TIME = "SAVE_PERIOD_TIME";
 	public final static String SAVE_SPEEDS = "SAVE_SPEEDS";
+	public final static String SAVE_COLOR = "SAVE_COLOR";
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -61,6 +64,7 @@ public class ResultActivityTwo extends Activity {
 			time = savedInstanceState.getInt(SAVE_TIME);	
 			period_time = savedInstanceState.getInt(SAVE_PERIOD_TIME);
 			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
+			color = savedInstanceState.getInt(SAVE_COLOR,0);
 		}
 		else {
 			periods = intent.getIntExtra(ResultsActivity.PERIOD_MESSAGE, 0);
@@ -71,6 +75,7 @@ public class ResultActivityTwo extends Activity {
 			time = intent.getIntExtra(ResultsActivity.TIME_MESSAGE, 0);
 			period_time = intent.getIntExtra(ResultsActivity.PERIOD_TIME_MESSAGE, 0);
 			speeds = intent.getIntArrayExtra(ResultsActivity.SPEEDS_MESSAGE);
+			color = intent.getIntExtra(ResultsActivity.COLOR_MESSAGE,0);
 		}
 		
 		ResultsView2 rv = new ResultsView2(getApplicationContext());
@@ -139,6 +144,7 @@ public class ResultActivityTwo extends Activity {
 		savedInstanceState.putInt("SAVE_TIME",time);
 		savedInstanceState.putInt("SAVE_PERIOD_TIME",period_time);
 		savedInstanceState.putIntArray("SAVE_SPEEDS",speeds);
+		savedInstanceState.putInt("SAVE_COLOR",color);
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -177,8 +183,9 @@ public class ResultActivityTwo extends Activity {
 		i.putExtra(TIME_MESSAGE, time);
 		i.putExtra(PERIOD_TIME_MESSAGE, period_time);
 		i.putExtra(SPEEDS_MESSAGE, speeds);
+		i.putExtra(COLOR_MESSAGE, color);
 		
-		startActivityForResult(i, QUIT_ALL);		
+		startActivityForResult(i, QUIT_ALL);			
 
 	}
 	
