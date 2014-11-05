@@ -3,11 +3,15 @@ package com.example.pacebuddy;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.HorizontalScrollView;
+import android.widget.ScrollView;
 
 public class ResultActivityThree extends Activity {
 	
@@ -22,7 +26,16 @@ public class ResultActivityThree extends Activity {
 	int period_time;
 	int[] speeds;
 	
+	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
+	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
+	public final static String TIME_3 = "derricp1.apps.MESSAGET3";
+	public final static String SPEED_1 = "derricp1.apps.MESSAGES1";
+	public final static String SPEED_2 = "derricp1.apps.MESSAGES2";
+	public final static String SPEED_3 = "derricp1.apps.MESSAGES3";
+	
 	int color;
+	
+	SharedPreferences sharedPref;
 	
 	public final static String PERIOD_MESSAGE = "derricp1.apps.RMESSAGE";
 	public final static String PERIOD_DISTANCE_MESSAGE = "derricp1.apps.RMESSAGE2";
@@ -54,6 +67,7 @@ public class ResultActivityThree extends Activity {
 		
 		int height = getWindowManager().getDefaultDisplay().getHeight();
 		int width = getWindowManager().getDefaultDisplay().getWidth();
+		sharedPref = getApplicationContext().getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE);
 		
 		if (savedInstanceState != null) {
 			periods = savedInstanceState.getInt(SAVE_PERIODS);
@@ -78,9 +92,17 @@ public class ResultActivityThree extends Activity {
 			color = intent.getIntExtra(ResultActivityTwo.COLOR_MESSAGE,0);
 		}
 		
+		ScrollView scroller = new ScrollView(getApplicationContext());
+		HorizontalScrollView hscroller = new HorizontalScrollView(getApplicationContext());
+		
 		ResultsView3 rv = new ResultsView3(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds);
-		setContentView(rv);
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds, sharedPref.getFloat(SPEED_1, 0), sharedPref.getFloat(SPEED_2, 0), sharedPref.getFloat(SPEED_3, 0));
+		
+		hscroller.addView(rv);
+		scroller.addView(hscroller);
+		setContentView(scroller);
+		
+		//setContentView(rv);
 		
 	}
 

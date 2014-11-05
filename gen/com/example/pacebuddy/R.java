@@ -35,14 +35,22 @@ public final class R {
         public static final int MinSpeedText=0x7f080009;
         public static final int PeriodBar=0x7f080004;
         public static final int PeriodText=0x7f080005;
-        public static final int action_about=0x7f08001c;
-        public static final int action_back=0x7f08001f;
-        public static final int action_next=0x7f080020;
-        public static final int action_quit=0x7f08001d;
-        public static final int action_return=0x7f08001e;
-        public static final int action_settings=0x7f08001b;
-        public static final int finish_button=0x7f080017;
-        public static final int lap_button=0x7f080015;
+        public static final int Time1Bar=0x7f080015;
+        public static final int Time1Text=0x7f080014;
+        public static final int Time2Bar=0x7f080017;
+        public static final int Time2Text=0x7f080016;
+        public static final int Time3Bar=0x7f080019;
+        public static final int Time3Text=0x7f080018;
+        public static final int action_about=0x7f080024;
+        public static final int action_back=0x7f080027;
+        public static final int action_next=0x7f080028;
+        public static final int action_quit=0x7f080025;
+        public static final int action_return=0x7f080026;
+        public static final int action_settings=0x7f080023;
+        public static final int button1=0x7f08001b;
+        public static final int button2=0x7f08001a;
+        public static final int finish_button=0x7f08001f;
+        public static final int lap_button=0x7f08001d;
         public static final int radio0=0x7f08000d;
         public static final int radio1=0x7f08000e;
         public static final int radio2=0x7f08000f;
@@ -52,11 +60,11 @@ public final class R {
         public static final int radio6=0x7f080013;
         public static final int radioGroup1=0x7f08000c;
         public static final int scrollView1=0x7f080000;
-        public static final int textView1=0x7f080016;
-        public static final int textView2=0x7f080019;
-        public static final int textView3=0x7f08001a;
-        public static final int textView4=0x7f080018;
-        public static final int time_text=0x7f080014;
+        public static final int textView1=0x7f08001e;
+        public static final int textView2=0x7f080021;
+        public static final int textView3=0x7f080022;
+        public static final int textView4=0x7f080020;
+        public static final int time_text=0x7f08001c;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

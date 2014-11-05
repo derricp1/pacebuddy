@@ -36,7 +36,7 @@ public class ResultsView extends View {
 	Paint linepaint = new Paint(Color.BLACK);
 	
 	DecimalFormat format = new DecimalFormat("00");
-	DecimalFormat format2 = new DecimalFormat("0.000");
+	DecimalFormat format2 = new DecimalFormat("0.00");
 
 	public ResultsView(Context context) {
 		super(context);
@@ -88,7 +88,7 @@ public class ResultsView extends View {
 		
 		totaldistance /= 5280;
 
-		max_speed = ((float) period_distances[max_index]/5280)/(((float) period_time/(float) (3600*1000)));
+		max_speed = ((float) period_distances[max_index]/(float)5280)/(((float) period_time/(float) (3600*1000)));
 		
 		//distance on top
 		canvas.drawText("Distance: " + format2.format(totaldistance) + " miles", 10, (float) (TOTAL_HEIGHT*0.07), blackpaint);
@@ -115,10 +115,26 @@ public class ResultsView extends View {
 		//periods
 		if (periods != 0) {
 		
+			while (periods > (MAX_WIDTH-MIN_WIDTH)) {
+				int tempsize = (int) Math.floor(periods/2);
+				if (tempsize < periods/2)
+					tempsize++;
+				
+				float[] temp = new float[tempsize];
+				double currperiod = 0;
+				for (int p=0;p<periods;p++) {
+					temp[(int) Math.floor(currperiod)] += period_distances[p];
+					currperiod += 0.5;
+				}
+				
+				periods = tempsize;
+				period_distances = temp;
+			}
+			
 			canvas.drawText("Periods", 10, (float) (TOTAL_HEIGHT*0.21), blackpaint);
 			
-			int dividedwidth = (MAX_WIDTH-MIN_WIDTH)/periods;
-			int currstart = MIN_WIDTH;
+			float dividedwidth = (float) (MAX_WIDTH-MIN_WIDTH)/(float) periods;
+			float currstart = MIN_WIDTH;
 			
 			float maxdistance = (float) 0.01;
 			for(int q=0;q<periods;q++) {
@@ -153,7 +169,26 @@ public class ResultsView extends View {
 		//laps
 		if (laps > 1) {
 			
-			canvas.drawText("Laps", 10, (float) (TOTAL_HEIGHT*0.61), blackpaint);
+			while (laps > (MAX_WIDTH-MIN_WIDTH)) {
+				int tempsize = (int) Math.floor(laps/2);
+				if (tempsize < laps/2)
+					tempsize++;
+				
+				float[] temp = new float[tempsize];
+				float[] temp2 = new float[tempsize];
+				double currperiod = 0;
+				for (int p=0;p<laps;p++) {
+					temp[(int) Math.floor(currperiod)] += lap_distances[p];
+					temp2[(int) Math.floor(currperiod)] += lap_times[p];
+					currperiod += 0.5;
+				}
+				
+				laps = tempsize;
+				lap_distances = temp;
+				lap_times = temp2;
+			}			
+			
+			canvas.drawText("Laps", 10, (float) (TOTAL_HEIGHT*0.55), blackpaint);
 			
 			float maxlapdistance = (float) 0.01;
 			for(int q=0;q<laps;q++) {
@@ -169,7 +204,7 @@ public class ResultsView extends View {
 			
 			for(int i=0;i<laps;i++) {
 				canvas.drawRect(currstart, Math.min(MAX_LAP_HEIGHT-1,MAX_LAP_HEIGHT-((MAX_LAP_HEIGHT-MIN_LAP_HEIGHT)*(lap_distances[i]/maxlapdistance))), currstart+(MAX_WIDTH-MIN_WIDTH)*(lap_times[i]/totallaptime), MAX_LAP_HEIGHT, redpaint);
-				currstart += (MAX_WIDTH-MIN_WIDTH)*(lap_times[i]/totallaptime);
+				currstart += ((float)(MAX_WIDTH-MIN_WIDTH))*(lap_times[i]/totallaptime);
 			}
 			
 			//y axis
@@ -178,7 +213,7 @@ public class ResultsView extends View {
 			canvas.drawText(format2.format(max_speed), graphpaint.getTextSize()/4, MIN_LAP_HEIGHT, graphpaint);
 		
 			//x axis
-			canvas.drawText("0", MIN_WIDTH, MAX_HEIGHT+graphpaint.getTextSize(), graphpaint);
+			canvas.drawText("0", MIN_WIDTH, MAX_LAP_HEIGHT+graphpaint.getTextSize(), graphpaint);
 			
 			canvas.drawText(format.format(halfminutes) + ":" + format.format(halfseconds) + ":" + format.format(halfmilliseconds), (float) (MAX_WIDTH-graphpaint.getTextSize()*1.5-(MAX_WIDTH-MIN_WIDTH)/2), MAX_LAP_HEIGHT+graphpaint.getTextSize(), graphpaint);
 			canvas.drawText(format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), (float) (MAX_WIDTH-graphpaint.getTextSize()*1.5), MAX_LAP_HEIGHT+graphpaint.getTextSize(), graphpaint);
@@ -204,9 +239,14 @@ public class ResultsView extends View {
 		MAX_HEIGHT = h/2;
 		MIN_WIDTH = 50;
 		MAX_WIDTH = w-50;
-		MIN_LAP_HEIGHT = (int) (h*0.65);
-		MAX_LAP_HEIGHT = (int) (h*0.9);
+		MIN_LAP_HEIGHT = (int) (h*0.58);
+		MAX_LAP_HEIGHT = (int) (h*0.83);
 		TOTAL_HEIGHT = h;
+	}
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	    setMeasuredDimension(width,height);
 	}
 
 }

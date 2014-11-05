@@ -6,6 +6,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,12 @@ public class MainActivity extends Activity {
 	public final static String MIN_SPEED = "derricp1.apps.MESSAGE4";
 	public final static String AUTOSTOP = "derricp1.apps.MESSAGE5";
 	public final static String COLOR = "derricp1.apps.MESSAGE6";
+	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
+	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
+	public final static String TIME_3 = "derricp1.apps.MESSAGET3";
+	public final static String SPEED_1 = "derricp1.apps.MESSAGES1";
+	public final static String SPEED_2 = "derricp1.apps.MESSAGES2";
+	public final static String SPEED_3 = "derricp1.apps.MESSAGES3";
 	
 	public final static String SAVE_DELAY = "SAVE_DELAY";
 	public final static String SAVE_PERIOD = "SAVE_PERIOD";
@@ -49,12 +57,16 @@ public class MainActivity extends Activity {
 	TextView max_speed_text;
 	TextView min_speed_text;
 	
+	SharedPreferences sharedPref;
+	
 	int autostop;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
 		 setContentView(R.layout.activity_main);
+		 
+		sharedPref = getApplicationContext().getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE);
 		 
 		 if (savedInstanceState != null) {
 			delay = savedInstanceState.getInt(SAVE_DELAY, 0);
@@ -65,12 +77,14 @@ public class MainActivity extends Activity {
 			color = savedInstanceState.getInt(SAVE_COLOR, 0);
 		 }
 		 else {
-			delay = 15;
-			period = 15;
-			max_speed = 5;
-			min_speed = 3;	
-			autostop = 0;
-			color = 0;
+			
+			delay = sharedPref.getInt(DELAY, 15);
+			period = sharedPref.getInt(PERIOD, 15);
+			max_speed = sharedPref.getInt(MAX_SPEED, 5);
+			min_speed = sharedPref.getInt(MIN_SPEED, 3);
+			autostop = sharedPref.getInt(AUTOSTOP, 0);
+			color = sharedPref.getInt(COLOR, 0);
+			
 		 }
 		
 		 myView = this.findViewById(android.R.id.content); //gets view
@@ -161,6 +175,11 @@ public class MainActivity extends Activity {
 		 max_speed_bar.setProgress(max_speed);
 		 min_speed_bar.setProgress(min_speed);
 		 
+		 delay_text.setText("Delay: " + delay + " seconds");
+		 period_text.setText("Period: " + period + " seconds");
+		 min_speed_text.setText("Min Speed: " + min_speed + " MPH");
+		 max_speed_text.setText("Max Speed: " + max_speed + " MPH");
+		 
 	}
 	
 	public void BeginRun(View view) {
@@ -183,6 +202,15 @@ public class MainActivity extends Activity {
 			i.putExtra(AUTOSTOP, autostop);
 			i.putExtra(COLOR, color);
 			
+			Editor editor = sharedPref.edit();
+			editor.putInt(DELAY, delay);
+			editor.putInt(PERIOD, period);
+			editor.putInt(MAX_SPEED, max_speed);
+			editor.putInt(MIN_SPEED, min_speed);
+			editor.putInt(AUTOSTOP, autostop);
+			editor.putInt(COLOR, color);
+			editor.commit();
+			
 			startActivityForResult(i,QUIT_ALL);
 		
 		}
@@ -199,6 +227,32 @@ public class MainActivity extends Activity {
 		if (resultCode == 3) {
 	        autostop = data.getIntExtra(OptionsActivity.AUTOSTOP_MESSAGE, 0);	
 	        color = data.getIntExtra(OptionsActivity.COLOR_MESSAGE, 0);
+	        
+	        if (data.getIntExtra("RESET", 0) > 0) {
+	        	delay = 15;
+	        	period = 15;
+	        	max_speed = 5;
+	        	min_speed = 3;
+	        	color = 0;
+	        	autostop = 0;
+	        }
+	        if (data.getIntExtra("RESET", 0) == 2) {
+				Editor editor = sharedPref.edit();
+				editor.putInt(DELAY, delay);
+				editor.putInt(PERIOD, period);
+				editor.putInt(MAX_SPEED, max_speed);
+				editor.putInt(MIN_SPEED, min_speed);
+				editor.putInt(AUTOSTOP, autostop);
+				editor.putInt(COLOR, color);
+				editor.putInt(SPEED_1, 0);
+				editor.putInt(SPEED_2, 0);
+				editor.putInt(SPEED_3, 0);
+				editor.putInt(TIME_1, 1);
+				editor.putInt(TIME_2, 10);
+				editor.putInt(TIME_3, 30);
+				editor.commit();	        	
+	        }
+	        
 	        //stay here afterwards
 		}
 
@@ -256,6 +310,10 @@ public class MainActivity extends Activity {
 	    return true;
 	}
 	
+	public void saveSettings() {
+
+	}
+	
 	public void onSaveInstanceState(Bundle savedInstanceState) { //this is important, rotation happens
 
 	    // Always call the superclass so it can save the view hierarchy state
@@ -269,5 +327,22 @@ public class MainActivity extends Activity {
 	    savedInstanceState.putInt(SAVE_COLOR, color);
 	    
 	}
+	
+	
+	@Override
+	public void onDestroy() {
+		
+		super.onDestroy();
+		
+		Editor editor = sharedPref.edit();
+		editor.putInt(DELAY, delay);
+		editor.putInt(PERIOD, period);
+		editor.putInt(MAX_SPEED, max_speed);
+		editor.putInt(MIN_SPEED, min_speed);
+		editor.putInt(AUTOSTOP, autostop);
+		editor.putInt(COLOR, color);
+		editor.commit();		
+	}
+	
 
 }

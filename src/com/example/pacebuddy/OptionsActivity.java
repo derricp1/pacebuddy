@@ -3,8 +3,11 @@ package com.example.pacebuddy;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +21,16 @@ public class OptionsActivity extends Activity {
 	public static final String AUTOSTOP_MESSAGE = "AUTOSTOP_MESSAGE";
 	public static final String COLOR_MESSAGE = "COLOR_MESSAGE";
 	
+	public final static String AUTOSTOP = "derricp1.apps.MESSAGE5";
+	public final static String COLOR = "derricp1.apps.MESSAGE6";
+	
+	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
+	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
+	public final static String TIME_3 = "derricp1.apps.MESSAGET3";
+	public final static String SPEED_1 = "derricp1.apps.MESSAGES1";
+	public final static String SPEED_2 = "derricp1.apps.MESSAGES2";
+	public final static String SPEED_3 = "derricp1.apps.MESSAGES3";
+	
 	public static final String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
 	public static final String SAVE_COLOR = "SAVE_COLOR";
 	
@@ -25,6 +38,12 @@ public class OptionsActivity extends Activity {
 	TextView autostop_text;
 	SeekBar autostopbar;
 	int color;
+	
+	int[] times;
+	SeekBar[] timebars;
+	TextView[] timetexts;
+	
+	SharedPreferences sharedPref;
 	
 	RadioButton[] buttons;
 
@@ -42,8 +61,30 @@ public class OptionsActivity extends Activity {
 		
 		autostopbar = (SeekBar) findViewById(R.id.AutoStopBar);
 		autostop_text = (TextView) findViewById(R.id.AutoStopText);
+		sharedPref = getApplicationContext().getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE);
 		
 		buttons = new RadioButton[7];
+		
+		times = new int[3];
+		timebars = new SeekBar[3];
+		timetexts = new TextView[3];
+		timebars[0] = (SeekBar) findViewById(R.id.Time1Bar);
+		timebars[1] = (SeekBar) findViewById(R.id.Time2Bar);
+		timebars[2] = (SeekBar) findViewById(R.id.Time3Bar);
+		timetexts[0] = (TextView) findViewById(R.id.Time1Text);
+		timetexts[1] = (TextView) findViewById(R.id.Time2Text);
+		timetexts[2] = (TextView) findViewById(R.id.Time3Text);
+		times[0] = sharedPref.getInt("TIME_1", 1);
+		times[1] = sharedPref.getInt("TIME_2", 10);
+		times[2] = sharedPref.getInt("TIME_3", 30);
+		timebars[0].setProgress(times[0]);
+		timebars[1].setProgress(times[1]);
+		timebars[2].setProgress(times[2]);
+		timetexts[0].setText("Low time: " + times[0] + ":00");
+		timetexts[1].setText("Medium time: " + times[1] + ":00");
+		timetexts[2].setText("High time: " + times[2] + ":00");
+		
+		//set
 		
 		buttons[0] = (RadioButton) findViewById(R.id.radio0);
 		buttons[1] = (RadioButton) findViewById(R.id.radio1);
@@ -89,6 +130,62 @@ public class OptionsActivity extends Activity {
 				
 			}			
 		});
+		
+	
+		
+		
+		
+		timebars[0].setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+			@Override
+			public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+				if (arg2) {
+					times[0] = (int) Math.max(1,(Math.floor(arg1)));
+					arg0.setProgress(times[0]);
+					timetexts[0].setText("Low time: " + times[0] + ":00");
+				}
+				
+			}			
+		});
+		timebars[2].setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+			@Override
+			public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+				if (arg2) {
+					times[2] = (int) Math.max(3,(Math.floor(arg1)));
+					arg0.setProgress(times[2]);
+					timetexts[2].setText("High time: " + times[2] + ":00");
+				}
+				
+			}			
+		});
+		timebars[1].setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+			@Override
+			public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+				if (arg2) {
+					times[1] = (int) Math.max(2,(Math.floor(arg1)));
+					arg0.setProgress(times[1]);
+					timetexts[1].setText("Medium time: " + times[1] + ":00");
+				}
+				
+			}			
+		});
 	
 	}
 
@@ -111,6 +208,18 @@ public class OptionsActivity extends Activity {
 	}
 	
 	public void Goto_Return(View view) { //return
+		finishReturn(0);
+	}
+	
+	public void Reset(View view) { //return
+		finishReturn(1);
+	}
+	
+	public void Reset_All(View view) { //return
+		finishReturn(2);
+	}
+	
+	public void finishReturn(int clear) {
 		Intent in = new Intent();
 
 		for(int i=0;i<7;i++) {
@@ -119,10 +228,19 @@ public class OptionsActivity extends Activity {
 			}
 		}		
 		
+		Editor editor = sharedPref.edit();
+		editor.putInt(AUTOSTOP, autostop);
+		editor.putInt(COLOR, color);
+		editor.putInt(TIME_1, times[0]);
+		editor.putInt(TIME_2, times[1]);
+		editor.putInt(TIME_3, times[2]);
+		editor.commit();
+		
 		in.putExtra("AUTOSTOP_MESSAGE", autostop);
 		in.putExtra("COLOR_MESSAGE", color);
+		in.putExtra("RESET", clear);
 		setResult(3,in); //quit
-        finish();
+        finish();		
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -160,5 +278,5 @@ public class OptionsActivity extends Activity {
 		savedInstanceState.putInt(SAVE_COLOR, color);
 		
 	}
-
+	
 }

@@ -51,7 +51,7 @@ public class ResultsView2 extends View {
 		boolean over_min = false;
 		
 		for (int i=0;i<periods;i++) {
-			float speed = ((float) period_distances[i]/5280)/(((float) period_time/(float) (3600*1000)));
+			float speed = (float)(period_distances[i]/(float)5280)/(((float) period_time/(float) (3600*1000)));
 			if (over_min == false && speed >= speeds[1]) {
 				over_min = true;
 			}
@@ -70,18 +70,23 @@ public class ResultsView2 extends View {
 				
 		}
 		
-		float iheight = 50;
-		if (TOTAL_HEIGHT/(is_over.size()+2) < 50 || TOTAL_HEIGHT/(is_under.size()+2) < 50)
-			iheight = Math.min((is_over.size()+2)/TOTAL_HEIGHT, (is_under.size()+2)/TOTAL_HEIGHT);		
+		float height1 = 50;
+		float height2 = 50;
+		int q1 = listChecker(is_over);
+		int q2 = listChecker(is_under);
 		
-		blackpaint.setTextSize(Math.max(20,iheight));
+		height1 = Math.min(50, height/(q1+2));
+		height2 = Math.min(50, height/(q2+2));
+		float height = Math.min(height1, height2);
+		
 		blackpaint.setColor(Color.BLACK);
+		blackpaint.setTextSize(height);
 		
-		canvas.drawText("Over Max", 10, iheight, blackpaint);
-		canvas.drawText("Under Min", (MAX_WIDTH+50)/2 + 10, iheight, blackpaint);
+		canvas.drawText("Over Max", 10, height, blackpaint);
+		canvas.drawText("Under Min", (MAX_WIDTH+50)/2 + 10, height, blackpaint);
 
-		canvas = listWriter(is_over, 10, iheight, canvas);
-		canvas = listWriter(is_under, (MAX_WIDTH+50)/2 + 10, iheight, canvas);
+		canvas = listWriter(is_over, 10, height, canvas);
+		canvas = listWriter(is_under, (MAX_WIDTH+50)/2 + 10, height, canvas);
 			
 	}
 	
@@ -155,6 +160,72 @@ public class ResultsView2 extends View {
 		
 	}
 	
+	public int listChecker(ArrayList<Integer> list) { //get how many periods we have.
+		int ranges = 0;
+		
+		int index = 0;
+		int start = -1; //nothing available
+		int end = -1;
+		//boolean endprint = false;
+		
+		while (index < list.size()) {
+			
+			if (start == -1) {
+				start = list.get(index);
+				end = start+1;
+			}
+			else {
+				if (list.get(index) == end) {
+					end += 1;
+				}
+				else {
+					
+					int time = start * period_time;
+					int end_time = end * period_time;
+					int[] bucket = {time,end_time};
+					for(int q=0;q<2;q++) {
+						int minutes = (int) Math.floor(bucket[q]/60000);
+						int seconds = (int) Math.floor((bucket[q] - (minutes * 60000))/1000);
+						int milliseconds = (int) (bucket[q] - (minutes * 60000) - (1000 * seconds));
+						
+						String s = format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds);
+						if (q == 0) {
+							s = s + "-";
+						}
+						ranges += 1;						
+					}
+					
+					//print range
+					
+					start = list.get(index);
+					end = start + 1;
+				}
+			}
+			
+			index++;
+			
+		}
+		
+		if (start > -1) {
+			int time = start * period_time;
+			int end_time = end * period_time;
+			int[] bucket = {time,end_time};
+			for(int q=0;q<2;q++) {
+				int minutes = (int) Math.floor(bucket[q]/60000);
+				int seconds = (int) Math.floor((bucket[q] - (minutes * 60000))/1000);
+				int milliseconds = (int) (bucket[q] - (minutes * 60000) - (1000 * seconds));
+				
+				String s = format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds);
+				if (q == 0) {
+					s = s + "-";
+				}
+				ranges += 1;					
+			}
+		}		
+		
+		return ranges;
+	}
+	
 	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp) {
 		periods = p;
 		period_distances = pd;
@@ -174,6 +245,11 @@ public class ResultsView2 extends View {
 		MIN_LAP_HEIGHT = 3*h/4;
 		MAX_LAP_HEIGHT = h;
 		TOTAL_HEIGHT = h;
+	}
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	    setMeasuredDimension(width,height);
 	}
 
 }

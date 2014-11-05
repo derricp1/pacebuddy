@@ -29,10 +29,13 @@ public class ResultsView3 extends View {
 	int period_time;
 	int[] speeds;
 	
+	float imgheight;
+	
 	int TOTAL_HEIGHT;
 	
-	Paint blackpaint = new Paint(Color.BLACK);
+	float[] records;
 	
+	Paint blackpaint = new Paint(Color.BLACK);
 	
 	DecimalFormat format = new DecimalFormat("00");
 	DecimalFormat format2 = new DecimalFormat("0.000");
@@ -58,8 +61,12 @@ public class ResultsView3 extends View {
 		
 		blackpaint.setTextSize(40);
 		
+		float alldist = 0;
+		float alltime = 0;
+		
 		if (periods != 0) {
 			for(int i=0;i<periods;i++) {
+				
 				if (((float) period_distances[i]/5280)/(((float) period_time/(float) (3600*1000))) > maxspeed) {
 					maxindex = i;
 					maxspeed = ((float) period_distances[i]/5280)/(((float) period_time/(float) (3600*1000)));
@@ -92,6 +99,7 @@ public class ResultsView3 extends View {
 		}
 		if (laps > 1) {
 			for(int i=0;i<laps;i++) {
+				
 				if (((float) lap_distances[i]/5280)/(((float) lap_times[i]/(float) (3600*1000))) > maxlapspeed) {
 					maxlapindex = i;
 					maxlapspeed = ((float) period_distances[i]/5280)/(((float) lap_times[i]/(float) (3600*1000)));
@@ -110,10 +118,33 @@ public class ResultsView3 extends View {
 			
 		}
 		
+		//total average
+		for(int i=0;i<laps;i++) {
+			alldist += lap_distances[i];
+			alltime += lap_times[i];
+		}
+		
+		float this_height = (height/2);
+		
+		if (laps > 1) {
+			imgheight = (float) (height + 360);
+			this_height = height;
+		}
+		
+		float avgtime = ((float) alldist/5280)/(((float) alltime/(float) (3600*1000)));
+		canvas.drawText("Average Speed", 10, this_height + 40, blackpaint);
+		canvas.drawText(avgtime + " MPH", 10, this_height + 80, blackpaint);
+		
+		canvas.drawText("Record 1", 10, this_height + 120, blackpaint);
+		canvas.drawText(records[0] + " MPH", 10, this_height + 160, blackpaint);
+		canvas.drawText("Record 2", 10, this_height + 200, blackpaint);
+		canvas.drawText(records[1] + " MPH", 10, this_height + 240, blackpaint);
+		canvas.drawText("Record 3", 10, this_height + 280, blackpaint);
+		canvas.drawText(records[2] + " MPH", 10, this_height + 320, blackpaint);
 		
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp, float rec1, float rec2, float rec3) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -125,6 +156,8 @@ public class ResultsView3 extends View {
 		period_time = pti;
 		speeds = sp;
 		
+		imgheight = h/2 + 360;
+		
 		MIN_HEIGHT = h/4;
 		MAX_HEIGHT = h/2;
 		MIN_WIDTH = 50;
@@ -132,6 +165,15 @@ public class ResultsView3 extends View {
 		MIN_LAP_HEIGHT = 3*h/4;
 		MAX_LAP_HEIGHT = h;
 		TOTAL_HEIGHT = h;
+		records = new float[3];
+		records[0] = rec1;
+		records[1] = rec2;
+		records[2] = rec3;
+	}
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	    setMeasuredDimension(width,(int)imgheight);
 	}
 
 }

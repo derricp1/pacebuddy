@@ -10,6 +10,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -70,12 +72,19 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SAVE_NUM_MIN_TIMES = "SAVE_NUM_MIN_TIMES";
 	public final static String SAVE_COLOR = "SAVE_COLOR";
 	
+	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
+	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
+	public final static String TIME_3 = "derricp1.apps.MESSAGET3";
+	public final static String SPEED_1 = "derricp1.apps.MESSAGES1";
+	public final static String SPEED_2 = "derricp1.apps.MESSAGES2";
+	public final static String SPEED_3 = "derricp1.apps.MESSAGES3";
+	
 	int QUIT_ALL = 0;
 	
 	int color;
 	
 	final int MS = 20;
-	final float QUOTA = (float) 1.25; //minimum accel to count
+	final float QUOTA = (float) 1.28; //minimum accel to count
 	final int NEXT_TICK = 8;
 	
 	int ticks = 0;
@@ -135,6 +144,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	int autostop;
 	int autostoptimer;
 	
+	SharedPreferences sharedPref;
+	
 	boolean canstart = false;
 
 	@Override
@@ -142,6 +153,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_run);
+		
+		sharedPref = getApplicationContext().getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE);
 		
 		canstart = false;
 		
@@ -494,6 +507,30 @@ public class RunActivity extends Activity implements SensorEventListener {
 		}
 	}
 	
+	public void checkRecords() {
+		
+		float[] records = {sharedPref.getFloat("SPEED_1", 0),sharedPref.getFloat("SPEED_2", 0),sharedPref.getFloat("SPEED_3", 0)};
+		int[] times = {sharedPref.getInt("TIME_1", 0),sharedPref.getInt("TIME_2", 0),sharedPref.getInt("TIME_3", 0)};
+	
+		for (int i=0;i<3;i++) {
+			if (centiseconds + 100 * seconds + 6000 * minutes > 6000 * times[i]) {
+				float sum = 0;
+				for (int q=0; q<periods; q++) {
+					sum += period_distances[q];
+				}
+				if ((sum/5280)/(((float) (centiseconds + 100 * seconds + 6000 * minutes)/(float) (3600*1000))) > records[i]) {
+					records[i] = sum; //mph
+				}
+			}
+		}
+		
+		Editor editor = sharedPref.edit();
+		editor.putFloat(SPEED_1, records[0]);
+		editor.putFloat(SPEED_2, records[1]);
+		editor.putFloat(SPEED_3, records[2]);
+		editor.commit();
+	}
+	
 	public void autostop() {
 		lap_times[laps] = lapclock; //seconds from MS
 		lap_distances[laps] = lapdistance;
@@ -517,7 +554,9 @@ public class RunActivity extends Activity implements SensorEventListener {
 		if (periods == period_limit) {
 			period_limit *= 2;
 			period_distances = Arrays.copyOf(period_distances, period_limit); 
-		}			
+		}	
+		
+		checkRecords();
 		
 		Intent i = new Intent(this, ResultsActivity.class);
 		
