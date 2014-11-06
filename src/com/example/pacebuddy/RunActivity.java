@@ -71,6 +71,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SAVE_NUM_MAX_TIMES = "SAVE_NUM_MAX_TIMES";
 	public final static String SAVE_NUM_MIN_TIMES = "SAVE_NUM_MIN_TIMES";
 	public final static String SAVE_COLOR = "SAVE_COLOR";
+	public final static String SAVE_TIMEOUT = "SAVE_TIMEOUT";
 	
 	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
 	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
@@ -94,6 +95,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	int period;
 	int max_speed;
 	int min_speed;
+	
+	int timeout;
 	
 	SensorManager mSensorManager;
 	Sensor mAccelerometer;
@@ -189,6 +192,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 			autostop = savedInstanceState.getInt(SAVE_AUTOSTOP);
 			autostoptimer = savedInstanceState.getInt(SAVE_AUTOSTOPTIMER);
 			color = savedInstanceState.getInt(SAVE_COLOR);
+			color = savedInstanceState.getInt(SAVE_TIMEOUT);
 		}
 		else {
 			lap_times = new float[5];
@@ -206,6 +210,11 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	periods = 0;
 	    	period_limit = 5;
 	    	perioddistance = 0;
+	    	
+	    	timeout = 60000 * intent.getIntExtra(MainActivity.TIMEOUT, 0);
+	    	if (timeout == 0) {
+	    		timeout = -999;
+	    	}
 	    	
 	    	minutes = 0;
 	    	seconds = 0;
@@ -327,6 +336,14 @@ public class RunActivity extends Activity implements SensorEventListener {
 			if (indelay == false) {
 				
 				autostoptimer += MS;
+				
+				if (timeout > -999) {
+					timeout -= MS;
+					if (timeout <= 0) {
+						autostop();
+					}
+				}
+				
 				if (autostop > 0 && autostoptimer > autostop) { //0 = off
 					autostop();
 				}
@@ -611,6 +628,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putInt(SAVE_AUTOSTOP, autostop);
 		savedInstanceState.putInt(SAVE_AUTOSTOPTIMER, autostoptimer);
 		savedInstanceState.putInt(SAVE_COLOR, color);
+		savedInstanceState.putInt(SAVE_TIMEOUT, timeout);
 	}
 	
 }

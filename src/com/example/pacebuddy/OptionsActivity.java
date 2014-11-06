@@ -20,28 +20,45 @@ public class OptionsActivity extends Activity {
 	
 	public static final String AUTOSTOP_MESSAGE = "AUTOSTOP_MESSAGE";
 	public static final String COLOR_MESSAGE = "COLOR_MESSAGE";
+	public static final String TIME1_MESSAGE = "TIME1_MESSAGE";
+	public static final String TIME2_MESSAGE = "TIME2_MESSAGE";
+	public static final String TIME3_MESSAGE = "TIME3_MESSAGE";
+	public static final String TIMEOUT_MESSAGE = "TIMEOUT_MESSAGE";
 	
+	public final static String DELAY = "derricp1.apps.MESSAGE";
+	public final static String PERIOD = "derricp1.apps.MESSAGE2";
+	public final static String MAX_SPEED = "derricp1.apps.MESSAGE3";
+	public final static String MIN_SPEED = "derricp1.apps.MESSAGE4";
 	public final static String AUTOSTOP = "derricp1.apps.MESSAGE5";
 	public final static String COLOR = "derricp1.apps.MESSAGE6";
-	
 	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
 	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
 	public final static String TIME_3 = "derricp1.apps.MESSAGET3";
 	public final static String SPEED_1 = "derricp1.apps.MESSAGES1";
 	public final static String SPEED_2 = "derricp1.apps.MESSAGES2";
 	public final static String SPEED_3 = "derricp1.apps.MESSAGES3";
+	public final static String TIMEOUT = "derricp1.apps.MESSAGE7";
 	
 	public static final String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
 	public static final String SAVE_COLOR = "SAVE_COLOR";
+	public static final String SAVE_TIME1 = "SAVE_TIME1";
+	public static final String SAVE_TIME2 = "SAVE_TIME2";
+	public static final String SAVE_TIME3 = "SAVE_TIME3";
+	public static final String SAVE_TIMEOUT = "SAVE_TIMEOUT";
 	
 	int autostop;
 	TextView autostop_text;
 	SeekBar autostopbar;
 	int color;
 	
+	int timeout;
+	
 	int[] times;
 	SeekBar[] timebars;
 	TextView[] timetexts;
+	
+	SeekBar timeoutbar;
+	TextView timeouttext;
 	
 	SharedPreferences sharedPref;
 	
@@ -52,20 +69,29 @@ public class OptionsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_options);
 	
+		times = new int[3];
+		sharedPref = getApplicationContext().getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE);
+		
 		if (savedInstanceState != null) {
 			autostop = savedInstanceState.getInt(SAVE_AUTOSTOP);
+			timeout = savedInstanceState.getInt(SAVE_TIMEOUT);
+			times[0] = savedInstanceState.getInt(SAVE_TIME1);
+			times[1] = savedInstanceState.getInt(SAVE_TIME2);
+			times[2] = savedInstanceState.getInt(SAVE_TIME3);
 		}
 		else {
 			autostop = 0;
+			times[0] = sharedPref.getInt("TIME_1", 1);
+			times[1] = sharedPref.getInt("TIME_2", 10);
+			times[2] = sharedPref.getInt("TIME_3", 30);
+			timeout = 0;
 		}
 		
 		autostopbar = (SeekBar) findViewById(R.id.AutoStopBar);
 		autostop_text = (TextView) findViewById(R.id.AutoStopText);
-		sharedPref = getApplicationContext().getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE);
-		
+
 		buttons = new RadioButton[7];
 		
-		times = new int[3];
 		timebars = new SeekBar[3];
 		timetexts = new TextView[3];
 		timebars[0] = (SeekBar) findViewById(R.id.Time1Bar);
@@ -74,9 +100,6 @@ public class OptionsActivity extends Activity {
 		timetexts[0] = (TextView) findViewById(R.id.Time1Text);
 		timetexts[1] = (TextView) findViewById(R.id.Time2Text);
 		timetexts[2] = (TextView) findViewById(R.id.Time3Text);
-		times[0] = sharedPref.getInt("TIME_1", 1);
-		times[1] = sharedPref.getInt("TIME_2", 10);
-		times[2] = sharedPref.getInt("TIME_3", 30);
 		timebars[0].setProgress(times[0]);
 		timebars[1].setProgress(times[1]);
 		timebars[2].setProgress(times[2]);
@@ -109,6 +132,31 @@ public class OptionsActivity extends Activity {
 			}
 		}
 		
+		timeoutbar = (SeekBar) findViewById(R.id.TimeOutBar);
+		timeouttext = (TextView) findViewById(R.id.TimeOutText);
+		
+		timeoutbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+			@Override
+			public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+				if (arg2) {
+					timeout = (int) (Math.floor(arg1));
+					arg0.setProgress(timeout);
+					if (timeout == 0) {
+						timeouttext.setText("No Time Out");
+					}
+					else
+						timeouttext.setText("Time out after: " + timeout + " minutes");
+				}
+				
+			}		
+		});	
+			
 		autostopbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onStopTrackingTouch(SeekBar seekBar) {
 
@@ -238,6 +286,7 @@ public class OptionsActivity extends Activity {
 		
 		in.putExtra("AUTOSTOP_MESSAGE", autostop);
 		in.putExtra("COLOR_MESSAGE", color);
+		in.putExtra("TIMEOUT_MESSAGE", timeout);
 		in.putExtra("RESET", clear);
 		setResult(3,in); //quit
         finish();		
@@ -276,7 +325,23 @@ public class OptionsActivity extends Activity {
 			}
 		}
 		savedInstanceState.putInt(SAVE_COLOR, color);
+		savedInstanceState.putInt(SAVE_TIMEOUT, timeout);
+		savedInstanceState.putInt(SAVE_TIME1, times[0]);
+		savedInstanceState.putInt(SAVE_TIME2, times[1]);
+		savedInstanceState.putInt(SAVE_TIME3, times[2]);
 		
+	}
+	
+	@Override
+	public void onDestroy() {
+		
+		super.onDestroy();
+		
+		Editor editor = sharedPref.edit();
+		editor.putInt(AUTOSTOP, autostop);
+		editor.putInt(COLOR, color);
+		editor.putInt(TIMEOUT, timeout);
+		editor.commit();		
 	}
 	
 }

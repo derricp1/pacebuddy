@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
 	public final static String SPEED_1 = "derricp1.apps.MESSAGES1";
 	public final static String SPEED_2 = "derricp1.apps.MESSAGES2";
 	public final static String SPEED_3 = "derricp1.apps.MESSAGES3";
+	public final static String TIMEOUT = "derricp1.apps.MESSAGE7";
 	
 	public final static String SAVE_DELAY = "SAVE_DELAY";
 	public final static String SAVE_PERIOD = "SAVE_PERIOD";
@@ -37,12 +38,14 @@ public class MainActivity extends Activity {
 	public final static String SAVE_MIN_SPEED = "SAVE_MIN_SPEED";
 	public final static String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
 	public final static String SAVE_COLOR = "SAVE_COLOR";
+	public final static String SAVE_TIMEOUT = "SAVE_TIMEOUT";
 	
 	int delay;
 	int period;
 	int max_speed;
 	int min_speed;
 	int color;
+	int timeout;
 
 	int QUIT_ALL = 0;
 	
@@ -75,6 +78,7 @@ public class MainActivity extends Activity {
 			min_speed = savedInstanceState.getInt(SAVE_MIN_SPEED, 0);
 			autostop = savedInstanceState.getInt(SAVE_AUTOSTOP, 0);
 			color = savedInstanceState.getInt(SAVE_COLOR, 0);
+			timeout = savedInstanceState.getInt(SAVE_TIMEOUT, 0);
 		 }
 		 else {
 			
@@ -84,6 +88,7 @@ public class MainActivity extends Activity {
 			min_speed = sharedPref.getInt(MIN_SPEED, 3);
 			autostop = sharedPref.getInt(AUTOSTOP, 0);
 			color = sharedPref.getInt(COLOR, 0);
+			timeout = sharedPref.getInt(TIMEOUT, 0);
 			
 		 }
 		
@@ -201,6 +206,7 @@ public class MainActivity extends Activity {
 			i.putExtra(MIN_SPEED, min_speed);
 			i.putExtra(AUTOSTOP, autostop);
 			i.putExtra(COLOR, color);
+			i.putExtra(TIMEOUT, timeout);
 			
 			Editor editor = sharedPref.edit();
 			editor.putInt(DELAY, delay);
@@ -209,6 +215,7 @@ public class MainActivity extends Activity {
 			editor.putInt(MIN_SPEED, min_speed);
 			editor.putInt(AUTOSTOP, autostop);
 			editor.putInt(COLOR, color);
+			editor.putInt(TIMEOUT, timeout);
 			editor.commit();
 			
 			startActivityForResult(i,QUIT_ALL);
@@ -235,11 +242,13 @@ public class MainActivity extends Activity {
 	        	min_speed = 3;
 	        	color = 0;
 	        	autostop = 0;
+	        	timeout = 0;
 	        }
 	        if (data.getIntExtra("RESET", 0) == 2) {
 				Editor editor = sharedPref.edit();
 				editor.putInt(DELAY, delay);
 				editor.putInt(PERIOD, period);
+				editor.putInt(TIMEOUT, timeout);
 				editor.putInt(MAX_SPEED, max_speed);
 				editor.putInt(MIN_SPEED, min_speed);
 				editor.putInt(AUTOSTOP, autostop);
@@ -325,6 +334,7 @@ public class MainActivity extends Activity {
 	    savedInstanceState.putInt(SAVE_MAX_SPEED, max_speed);
 	    savedInstanceState.putInt(SAVE_MIN_SPEED, min_speed);
 	    savedInstanceState.putInt(SAVE_COLOR, color);
+	    savedInstanceState.putInt(SAVE_TIMEOUT, timeout);
 	    
 	}
 	
@@ -341,6 +351,7 @@ public class MainActivity extends Activity {
 		editor.putInt(MIN_SPEED, min_speed);
 		editor.putInt(AUTOSTOP, autostop);
 		editor.putInt(COLOR, color);
+		editor.putInt(TIMEOUT, timeout);
 		editor.commit();		
 	}
 	

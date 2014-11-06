@@ -75,6 +75,15 @@ public class ResultsView extends View {
 				break;
 		}
 		
+		//additional info added
+
+		int finalptime = time;
+		while (finalptime > period_time) {
+			finalptime -= period_time;
+		}		
+		
+		//end of additional info
+		
 		float max_speed = 0;
 		int max_index = 0;
 		float totaldistance = 0;
@@ -115,7 +124,7 @@ public class ResultsView extends View {
 		//periods
 		if (periods != 0) {
 		
-			while (periods > (MAX_WIDTH-MIN_WIDTH)) {
+			while (periods > (MAX_WIDTH-MIN_WIDTH)) { //halve in case there are too many periods
 				int tempsize = (int) Math.floor(periods/2);
 				if (tempsize < periods/2)
 					tempsize++;
@@ -142,7 +151,12 @@ public class ResultsView extends View {
 			}
 			
 			for(int i=0;i<periods;i++) {
-				canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+dividedwidth, MAX_HEIGHT, redpaint);
+				if (i == periods-1) {
+					canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+(dividedwidth*((float)finalptime/(float)period_time)), MAX_HEIGHT, redpaint);
+				}
+				else {
+					canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+dividedwidth, MAX_HEIGHT, redpaint);
+				}
 				currstart += dividedwidth;
 			}
 			
@@ -151,9 +165,8 @@ public class ResultsView extends View {
 			canvas.drawText(format2.format((max_speed/2)), graphpaint.getTextSize()/4, MIN_HEIGHT-((MIN_HEIGHT-MAX_HEIGHT)/2), graphpaint);
 			canvas.drawText(format2.format(max_speed), graphpaint.getTextSize()/4, MIN_HEIGHT, graphpaint);
 		
-			//x axis
+			//x axis - old
 			canvas.drawText("0", MIN_WIDTH, MAX_HEIGHT+graphpaint.getTextSize(), graphpaint);
-			
 			canvas.drawText(format.format(halfminutes) + ":" + format.format(halfseconds) + ":" + format.format(halfmilliseconds), (float) (MAX_WIDTH-graphpaint.getTextSize()*1.5-(MAX_WIDTH-MIN_WIDTH)/2), MAX_HEIGHT+graphpaint.getTextSize(), graphpaint);
 			canvas.drawText(format.format(minutes) + ":" + format.format(seconds) + ":" + format.format(milliseconds), (float) (MAX_WIDTH-graphpaint.getTextSize()*1.5), MAX_HEIGHT+graphpaint.getTextSize(), graphpaint);
 			

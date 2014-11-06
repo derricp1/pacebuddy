@@ -139,23 +139,42 @@
                 android:max="120"
                 android:progress="1" />   
 
-                 <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/scrollView1"
-        android:layout_centerVertical="true"
-        android:onClick="Reset_All"
-        android:text="Reset Defaults" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button2"
-        android:layout_alignParentRight="true"
-        android:onClick="Reset"
-        android:text="Defaults" />
+		   	<Button
+		        android:id="@+id/button2"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignRight="@+id/scrollView1"
+		        android:layout_centerVertical="true"
+		        android:onClick="Reset_All"
+		        android:text="Reset Defaults" />
+		
+		    <Button
+		        android:id="@+id/button1"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_above="@+id/button2"
+		        android:layout_alignParentRight="true"
+		        android:onClick="Reset"
+		        android:text="Defaults" />
+		    
+		    
+		     <TextView
+                android:id="@+id/TimeOutText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.69"
+   				android:paddingTop="20dp"
+                android:layout_below="@+id/TimeOutBar"
+                android:text="No Time Out"
+                android:textSize="24sp" />              
+             <SeekBar
+                android:id="@+id/TimeOutBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button1"
+                android:paddingTop="50dp"
+                android:max="120"
+                android:progress="0" />   
             
             
         </LinearLayout>
