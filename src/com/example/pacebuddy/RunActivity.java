@@ -225,9 +225,6 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	perioddistance = 0;
 	    	
 	    	timeout = 60000 * intent.getIntExtra(MainActivity.TIMEOUT, 0);
-	    	if (timeout == 0) {
-	    		timeout = -999;
-	    	}
 	    	
 	    	minutes = 0;
 	    	seconds = 0;
@@ -256,6 +253,10 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	margintime = 0;
 	    	
 		}
+		
+    	if (timeout == 0) {
+    		timeout = -999;
+    	}
 		
 		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //Also need to be able to recover info on destroy and recreate
 
@@ -359,12 +360,12 @@ public class RunActivity extends Activity implements SensorEventListener {
 				if (timeout > -999) {
 					timeout -= MS;
 					if (timeout <= 0) {
-						autostop();
+						autostopper(); //this one
 					}
 				}
 				
 				if (autostop > 0 && autostoptimer > autostop) { //0 = off
-					autostop();
+					autostopper();
 				}
 				
 				if (ticks > 0)
@@ -425,7 +426,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 		public void run() {
 			if (indelay == false) {
 				time_text.setText(minutes + ":" + format.format(seconds) + ":" + format.format(centiseconds));
-				
+		        tempview.setText(Float.toString(distance));
+		        dist_text.setText(format2.format((float) distance/(float)5280) + " Miles");
 				
 				//set margintext
 				float marginsum = 0;
@@ -444,14 +446,9 @@ public class RunActivity extends Activity implements SensorEventListener {
 				time_text.setText("IN DELAY PERIOD");
 			}
 
-	        tempview.setText(Float.toString(distance));
+	        //tempview.setText(Float.toString(distance));
 		}
 		
-	}
-	
-	
-	public void onDestroy() {
-		super.onDestroy();
 	}
 	
 	@Override
@@ -511,7 +508,6 @@ public class RunActivity extends Activity implements SensorEventListener {
 		  lapdistance += d;
 		  perioddistance += d;
 		  margindistances[(int) Math.max(0,(Math.floor(margintime/20) - 1))] += d;
-		  dist_text.setText(format2.format((float) distance/(float)5280) + " Miles");
 	}
 	
 	public int compressTime() {
@@ -548,7 +544,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		
 		//add the final period and lap
 		if (!indelay) { //should only operate when moving in proper time		
-			autostop();
+			autostopper();
 		}
 		else {
 			Goto_Return(view);
@@ -561,13 +557,13 @@ public class RunActivity extends Activity implements SensorEventListener {
 	        Intent resultIntent = new Intent();
 	        setResult(1,resultIntent); //quit everything
 	        finish();
-	        System.exit(0);			
+	        //System.exit(0);			
 		}
 		else {
 			Intent resultIntent = new Intent();
 			setResult(0,resultIntent); //don't quit everything
 			finish();
-	        System.exit(0);
+	        //System.exit(0);
 		}
 	}
 	
@@ -595,7 +591,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		editor.commit();
 	}
 	
-	public void autostop() {
+	public void autostopper() {
 		lap_times[laps] = lapclock; //seconds from MS
 		lap_distances[laps] = lapdistance;
 		
@@ -637,8 +633,16 @@ public class RunActivity extends Activity implements SensorEventListener {
 		i.putExtra(SPEEDS_MESSAGE, speeds);
 		
 		timer.cancel();
-		
+
 		startActivityForResult(i,QUIT_ALL);
+	}
+	
+	public void onStop() {
+		
+		super.onStop();
+		
+		timer.cancel();
+		
 	}
 	
 	@Override

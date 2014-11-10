@@ -193,13 +193,13 @@ public class ResultsActivity extends Activity {
 	        Intent resultIntent = new Intent();
 	        setResult(1,resultIntent); //quit everything
 	        finish();
-	        System.exit(0);			
+	        //System.exit(0);			
 		}
 		if (resultCode == 0) {
 			Intent resultIntent = new Intent();
 			setResult(0,resultIntent); //don't quit everything
 			finish();
-	        System.exit(0);
+	        //System.exit(0);
 		}
 		if (resultCode == 2) {
 			//do nothing, wait in this activity

@@ -21,5 +21,22 @@
     <string name="color_blue">Blue</string>
     <string name="color_magenta">Magenta</string>
     <string name="color_black">Black</string>
+    <string name="lowtime">Low Time: 1:00</string>
+    <string name="medtime">Medium Time: 10:00</string>
+    <string name="hightime">High Time: 30:00</string>
+    <string name="notime">No Time Out</string>
+    <string name="resetdefaults">Reset Defaults</string>
+    <string name="defaults">Defaults</string>
+    <string name="0mph">0.000 MPH</string>
+    <string name="0time">0:00:00</string>
+    <string name="0miles">0.000 Miles</string>
+    <string name="autostopoff">Autostop: Off</string>
+    <string name="finish">Finish</string>
+    <string name="lap">LAP</string>
+    <string name="gostring">GO!</string>
+    <string name="periodstring">Period: 15 seconds</string>
+    <string name="delaystring">Delay: 15 seconds</string>
+    <string name="maxstring">Max Speed: 5 MPH</string>
+    <string name="minstring">Min Speed: 3 MPH</string>
 
 </resources>

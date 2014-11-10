@@ -41,16 +41,16 @@ public final class R {
         public static final int Time2Text=0x7f080016;
         public static final int Time3Bar=0x7f080019;
         public static final int Time3Text=0x7f080018;
-        public static final int TimeOutBar=0x7f08001d;
-        public static final int TimeOutText=0x7f08001c;
+        public static final int TimeOutBar=0x7f08001b;
+        public static final int TimeOutText=0x7f08001a;
         public static final int action_about=0x7f080025;
         public static final int action_back=0x7f080028;
         public static final int action_next=0x7f080029;
         public static final int action_quit=0x7f080026;
         public static final int action_return=0x7f080027;
         public static final int action_settings=0x7f080024;
-        public static final int button1=0x7f08001b;
-        public static final int button2=0x7f08001a;
+        public static final int button1=0x7f08001d;
+        public static final int button2=0x7f08001c;
         public static final int dist_text=0x7f080021;
         public static final int finish_button=0x7f08001f;
         public static final int lap_button=0x7f08001e;
@@ -84,6 +84,9 @@ public final class R {
         public static final int run=0x7f070005;
     }
     public static final class string {
+        public static final int 0miles=0x7f05001c;
+        public static final int 0mph=0x7f05001a;
+        public static final int 0time=0x7f05001b;
         public static final int action_about=0x7f050002;
         public static final int action_back=0x7f050004;
         public static final int action_next=0x7f050005;
@@ -91,6 +94,7 @@ public final class R {
         public static final int action_return=0x7f050003;
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
+        public static final int autostopoff=0x7f05001d;
         public static final int color_black=0x7f050013;
         public static final int color_blue=0x7f050011;
         public static final int color_gray=0x7f05000e;
@@ -98,7 +102,20 @@ public final class R {
         public static final int color_magenta=0x7f050012;
         public static final int color_red=0x7f05000d;
         public static final int color_yellow=0x7f05000f;
+        public static final int defaults=0x7f050019;
+        public static final int delaystring=0x7f050022;
+        public static final int finish=0x7f05001e;
+        public static final int gostring=0x7f050020;
         public static final int hello_world=0x7f050007;
+        public static final int hightime=0x7f050016;
+        public static final int lap=0x7f05001f;
+        public static final int lowtime=0x7f050014;
+        public static final int maxstring=0x7f050023;
+        public static final int medtime=0x7f050015;
+        public static final int minstring=0x7f050024;
+        public static final int notime=0x7f050017;
+        public static final int periodstring=0x7f050021;
+        public static final int resetdefaults=0x7f050018;
         public static final int title_activity_options=0x7f05000c;
         public static final int title_activity_result_activity_three=0x7f05000b;
         public static final int title_activity_result_activity_two=0x7f05000a;

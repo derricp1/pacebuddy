@@ -26,14 +26,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.20"
                 android:onClick="BeginRun"
-                android:text="GO!" />
+                android:text="@string/gostring" />
             
 		    <SeekBar
 		        android:id="@+id/DelayBar"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_alignParentTop="true"
 		        android:max="120"
 		        android:progress="15"
 		        android:layout_marginTop="60dp" />
@@ -42,15 +40,13 @@
 		        android:id="@+id/DelayText"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:text="Delay: 15 seconds"
+		        android:text="@string/delaystring"
 		        android:textSize="24sp" />
 		
 		    <SeekBar
 		        android:id="@+id/PeriodBar"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_below="@+id/DelayBar"
 		        android:max="300"
 		        android:progress="15"
 		        android:layout_marginTop="60dp" />
@@ -59,15 +55,13 @@
 		        android:id="@+id/PeriodText"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:text="Period: 15 seconds"
+		        android:text="@string/periodstring"
 		        android:textSize="24sp" />
 		
 		    <SeekBar
 		        android:id="@+id/MaxSpeedBar"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_below="@+id/PeriodBar"
 		        android:max="12"
 		        android:progress="5"
 		        android:layout_marginTop="60dp" />
@@ -76,15 +70,13 @@
 		        android:id="@+id/MaxSpeedText"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:text="Max Speed: 5 MPH"
+		        android:text="@string/maxstring"
 		        android:textSize="24sp" />
 		
 		    <SeekBar
 		        android:id="@+id/MinSpeedBar"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_below="@+id/MaxSpeedBar"
 		        android:max="12"
 		        android:progress="3"
 		        android:layout_marginTop="60dp" />   
@@ -94,7 +86,7 @@
 		       android:textSize="24sp"
 		       android:layout_width="wrap_content"
 		       android:layout_height="wrap_content"
-		       android:text="Min Speed: 3 MPH" />
+		       android:text="@string/minstring" />
            
         </LinearLayout>
     </ScrollView>
