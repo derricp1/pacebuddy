@@ -72,6 +72,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SAVE_NUM_MIN_TIMES = "SAVE_NUM_MIN_TIMES";
 	public final static String SAVE_COLOR = "SAVE_COLOR";
 	public final static String SAVE_TIMEOUT = "SAVE_TIMEOUT";
+	public final static String SAVE_MARGINDISTANCE = "SAVE_MARGINDISTANCE";
+	public final static String SAVE_MARGINTIME = "SAVE_MARGINTIME";
 	
 	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
 	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
@@ -109,6 +111,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	float this_period_speed;
 	
 	DecimalFormat format = new DecimalFormat("00");
+	DecimalFormat format2 = new DecimalFormat("0.000");
 	
 	TextView time_text;
 	int minutes;
@@ -124,7 +127,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	boolean indelay = true;
 	int periodclock;
 	
-	TextView[] views = new TextView[4];
+	TextView tempview;
 	
 	Timer timer = new Timer();
 	
@@ -150,6 +153,14 @@ public class RunActivity extends Activity implements SensorEventListener {
 	SharedPreferences sharedPref;
 	
 	boolean canstart = false;
+	
+	//timing stuff
+	TextView dist_text; //uses distance
+	
+	float[] margindistances;
+	int margintime;
+	TextView margintext;
+	//maxes out at 5 s
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +204,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 			autostoptimer = savedInstanceState.getInt(SAVE_AUTOSTOPTIMER);
 			color = savedInstanceState.getInt(SAVE_COLOR);
 			color = savedInstanceState.getInt(SAVE_TIMEOUT);
+			margindistances = savedInstanceState.getFloatArray(SAVE_MARGINDISTANCE);
+			margintime = savedInstanceState.getInt(SAVE_MARGINTIME);
 		}
 		else {
 			lap_times = new float[5];
@@ -236,6 +249,12 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    	autostoptimer = 0;
 	    	color = intent.getIntExtra(MainActivity.COLOR, 0);
 	    	
+	    	margindistances = new float[250];
+	    	for (int i=0;i<25;i++)
+	    		margindistances[i] = 0;
+	    	
+	    	margintime = 0;
+	    	
 		}
 		
 		//setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR); //Also need to be able to recover info on destroy and recreate
@@ -251,16 +270,16 @@ public class RunActivity extends Activity implements SensorEventListener {
 		rotation = getWindowManager().getDefaultDisplay().getRotation();
 
 		time_text = (TextView) findViewById(R.id.time_text);
-		
-		views[0] = (TextView) findViewById(R.id.textView1);
-		views[1] = (TextView) findViewById(R.id.textView2);
-		views[2] = (TextView) findViewById(R.id.textView3);
-		views[3] = (TextView) findViewById(R.id.textView4);
-		lap_button = (Button) findViewById(R.id.lap_button);
 
-		timer.schedule(new updateTask(), 0, MS); //should be last
+		tempview = (TextView) findViewById(R.id.textView4);
+		lap_button = (Button) findViewById(R.id.lap_button);
 		
 		canstart = true;
+		
+		dist_text = (TextView) findViewById(R.id.dist_text);
+		margintext = (TextView) findViewById(R.id.margin_text);
+		
+		timer.schedule(new updateTask(), 0, MS); //should be last
 		
 	}
 
@@ -361,6 +380,17 @@ public class RunActivity extends Activity implements SensorEventListener {
 					}
 				}
 				
+				//margin
+				if (margintime < 5000) {
+					margintime += MS;
+				}
+				else {
+					for(int q=1;q<250;q++) {
+						margindistances[q-1] = margindistances[q];
+					}
+					margindistances[249] = 0;
+				}
+					
 				periodclock += MS;
 				if (periodclock >= period) {
 					//update stats
@@ -395,15 +425,26 @@ public class RunActivity extends Activity implements SensorEventListener {
 		public void run() {
 			if (indelay == false) {
 				time_text.setText(minutes + ":" + format.format(seconds) + ":" + format.format(centiseconds));
+				
+				
+				//set margintext
+				float marginsum = 0;
+				for (int q=0;q<250;q++) {
+					marginsum += margindistances[q];
+				}
+				if (margintime > 0) {
+					margintext.setText(format2.format(((float)marginsum/(float)5280)/((float)margintime/(float)(1000*3600))) + " MPH");
+				}
+				else {
+					margintext.setText("0.000 MPH");					
+				}
+				
 			}
 			else {
 				time_text.setText("IN DELAY PERIOD");
 			}
-	          
-	        views[0].setText(Float.toString(linearacceleration[0]));
-	        views[1].setText(Float.toString(linearacceleration[1]));
-	        views[2].setText(Float.toString(linearacceleration[2]));
-	        views[3].setText(Float.toString(distance));
+
+	        tempview.setText(Float.toString(distance));
 		}
 		
 	}
@@ -434,22 +475,14 @@ public class RunActivity extends Activity implements SensorEventListener {
 	          if (able == true) {
 		          if (pastaccel > curraccel && lastchange == 1) { //was increasing, now slowing
 		        	  if (Math.abs(pastaccel) > QUOTA) {
-		        		  autostoptimer = 0;
-		        		  ticks = NEXT_TICK;
 		        		  float d = getExtraDist(pastaccel);
-		        		  distance += d;
-		        		  lapdistance += d;
-		        		  perioddistance += d;
+		        		  addDistance(d);
 		        	  }
 		          }
 		          if (pastaccel < curraccel && lastchange == -1) { //was slowing, now increasing
 		        	  if (Math.abs(pastaccel) > QUOTA) {
-		        		  autostoptimer = 0;
-		        		  ticks = NEXT_TICK;
 		        		  float d = getExtraDist(pastaccel);
-		        		  distance += d;
-		        		  lapdistance += d;
-		        		  perioddistance += d;
+		        		  addDistance(d);
 		        	  }	        	  
 		          }
 	          }
@@ -469,6 +502,20 @@ public class RunActivity extends Activity implements SensorEventListener {
 	          
 		}
 	
+	}
+	
+	public void addDistance(float d) {
+		  autostoptimer = 0;
+		  ticks = NEXT_TICK;
+		  distance += d;
+		  lapdistance += d;
+		  perioddistance += d;
+		  margindistances[(int) Math.max(0,(Math.floor(margintime/20) - 1))] += d;
+		  dist_text.setText(format2.format((float) distance/(float)5280) + " Miles");
+	}
+	
+	public int compressTime() {
+		return (centiseconds + 100 * seconds + 6000 * minutes);
 	}
 
 	@Override
@@ -535,7 +582,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 				for (int q=0; q<periods; q++) {
 					sum += period_distances[q];
 				}
-				if ((sum/5280)/(((float) (centiseconds + 100 * seconds + 6000 * minutes)/(float) (3600*1000))) > records[i]) {
+				if ((sum/5280)/(((float) (compressTime())/(float) (3600*1000))) > records[i]) {
 					records[i] = sum; //mph
 				}
 			}
@@ -629,6 +676,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putInt(SAVE_AUTOSTOPTIMER, autostoptimer);
 		savedInstanceState.putInt(SAVE_COLOR, color);
 		savedInstanceState.putInt(SAVE_TIMEOUT, timeout);
+		savedInstanceState.putInt(SAVE_MARGINTIME, margintime);
+		savedInstanceState.putFloatArray(SAVE_MARGINDISTANCE, margindistances);
 	}
 	
 }
