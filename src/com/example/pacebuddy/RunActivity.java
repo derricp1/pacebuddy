@@ -34,6 +34,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
 	public final static String COLOR_MESSAGE = "derricp1.apps.RMESSAGE9";
+	public final static String STEPS_MESSAGE = "derricp1.apps.RMESSAGE10";
 	
 	//strings for state saving
 	public final static String SAVE_AUTOSTOP = "SAVE_AUTOSTOP";
@@ -74,6 +75,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 	public final static String SAVE_TIMEOUT = "SAVE_TIMEOUT";
 	public final static String SAVE_MARGINDISTANCE = "SAVE_MARGINDISTANCE";
 	public final static String SAVE_MARGINTIME = "SAVE_MARGINTIME";
+	public final static String SAVE_STEPS = "SAVE_STEPS";
 	
 	public final static String TIME_1 = "derricp1.apps.MESSAGET1";
 	public final static String TIME_2 = "derricp1.apps.MESSAGET2";
@@ -161,6 +163,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	int margintime;
 	TextView margintext;
 	//maxes out at 5 s
+	
+	int steps;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -206,6 +210,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 			color = savedInstanceState.getInt(SAVE_TIMEOUT);
 			margindistances = savedInstanceState.getFloatArray(SAVE_MARGINDISTANCE);
 			margintime = savedInstanceState.getInt(SAVE_MARGINTIME);
+			steps = savedInstanceState.getInt(SAVE_STEPS);
 		}
 		else {
 			lap_times = new float[5];
@@ -251,6 +256,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 	    		margindistances[i] = 0;
 	    	
 	    	margintime = 0;
+	    	
+	    	steps = 0;
 	    	
 		}
 		
@@ -508,6 +515,8 @@ public class RunActivity extends Activity implements SensorEventListener {
 		  lapdistance += d;
 		  perioddistance += d;
 		  margindistances[(int) Math.max(0,(Math.floor(margintime/20) - 1))] += d;
+		  
+		  steps++;
 	}
 	
 	public int compressTime() {
@@ -628,6 +637,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		i.putExtra(TIME_MESSAGE, (centiseconds + 100 * seconds + 6000 * minutes));
 		i.putExtra(PERIOD_TIME_MESSAGE, period);
 		i.putExtra(COLOR_MESSAGE, color);
+		i.putExtra(STEPS_MESSAGE, steps);
 		
 		int[] speeds = {max_speed,min_speed};
 		i.putExtra(SPEEDS_MESSAGE, speeds);
@@ -681,6 +691,7 @@ public class RunActivity extends Activity implements SensorEventListener {
 		savedInstanceState.putInt(SAVE_COLOR, color);
 		savedInstanceState.putInt(SAVE_TIMEOUT, timeout);
 		savedInstanceState.putInt(SAVE_MARGINTIME, margintime);
+		savedInstanceState.putInt(SAVE_STEPS, steps);
 		savedInstanceState.putFloatArray(SAVE_MARGINDISTANCE, margindistances);
 	}
 	

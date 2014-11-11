@@ -28,6 +28,7 @@ public class ResultsView3 extends View {
 	int time;
 	int period_time;
 	int[] speeds;
+	int steps;
 	
 	float imgheight;
 	
@@ -142,9 +143,10 @@ public class ResultsView3 extends View {
 		canvas.drawText("Record 3", 10, this_height + 280, blackpaint);
 		canvas.drawText(records[2] + " MPH", 10, this_height + 320, blackpaint);
 		
+		canvas.drawText("Steps Taken: " + steps, 10, this_height + 400, blackpaint);
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp, float rec1, float rec2, float rec3) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp, float rec1, float rec2, float rec3, int s) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -155,6 +157,8 @@ public class ResultsView3 extends View {
 		time = ti;
 		period_time = pti;
 		speeds = sp;
+		
+		steps = s;
 		
 		imgheight = h/2 + 360;
 		

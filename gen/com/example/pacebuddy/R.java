@@ -84,9 +84,9 @@ public final class R {
         public static final int run=0x7f070005;
     }
     public static final class string {
-        public static final int 0miles=0x7f05001c;
-        public static final int 0mph=0x7f05001a;
-        public static final int 0time=0x7f05001b;
+        public static final int _0miles=0x7f05001c;
+        public static final int _0mph=0x7f05001a;
+        public static final int _0time=0x7f05001b;
         public static final int action_about=0x7f050002;
         public static final int action_back=0x7f050004;
         public static final int action_next=0x7f050005;

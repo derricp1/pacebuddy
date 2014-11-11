@@ -35,6 +35,8 @@ public class ResultActivityThree extends Activity {
 	
 	int color;
 	
+	int steps;
+	
 	SharedPreferences sharedPref;
 	
 	public final static String PERIOD_MESSAGE = "derricp1.apps.RMESSAGE";
@@ -46,6 +48,7 @@ public class ResultActivityThree extends Activity {
 	public final static String PERIOD_TIME_MESSAGE = "derricp1.apps.RMESSAGE7";
 	public final static String SPEEDS_MESSAGE = "derricp1.apps.RMESSAGE8";
 	public final static String COLOR_MESSAGE = "derricp1.apps.RMESSAGE9";
+	public final static String STEPS_MESSAGE = "derricp1.apps.RMESSAGE10";
 	
 	public final static String SAVE_PERIODS = "SAVE_PERIODS";
 	public final static String SAVE_PERIOD_DISTANCES = "SAVE_PERIOD_DISTANCES";
@@ -56,6 +59,7 @@ public class ResultActivityThree extends Activity {
 	public final static String SAVE_PERIOD_TIME = "SAVE_PERIOD_TIME";
 	public final static String SAVE_SPEEDS = "SAVE_SPEEDS";
 	public final static String SAVE_COLOR = "SAVE_COLOR";
+	public final static String SAVE_STEPS = "SAVE_STEPS";
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -79,6 +83,7 @@ public class ResultActivityThree extends Activity {
 			period_time = savedInstanceState.getInt(SAVE_PERIOD_TIME);
 			speeds = savedInstanceState.getIntArray(SAVE_SPEEDS);
 			color = savedInstanceState.getInt(SAVE_COLOR);
+			steps = savedInstanceState.getInt(SAVE_STEPS);
 		}
 		else {
 			periods = intent.getIntExtra(ResultActivityTwo.PERIOD_MESSAGE, 0);
@@ -90,13 +95,14 @@ public class ResultActivityThree extends Activity {
 			period_time = intent.getIntExtra(ResultActivityTwo.PERIOD_TIME_MESSAGE, 0);
 			speeds = intent.getIntArrayExtra(ResultActivityTwo.SPEEDS_MESSAGE);
 			color = intent.getIntExtra(ResultActivityTwo.COLOR_MESSAGE,0);
+			steps = intent.getIntExtra(ResultActivityTwo.STEPS_MESSAGE,0);
 		}
 		
 		ScrollView scroller = new ScrollView(getApplicationContext());
 		HorizontalScrollView hscroller = new HorizontalScrollView(getApplicationContext());
 		
 		ResultsView3 rv = new ResultsView3(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds, sharedPref.getFloat(SPEED_1, 0), sharedPref.getFloat(SPEED_2, 0), sharedPref.getFloat(SPEED_3, 0));
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds, sharedPref.getFloat(SPEED_1, 0), sharedPref.getFloat(SPEED_2, 0), sharedPref.getFloat(SPEED_3, 0), steps);
 		
 		hscroller.addView(rv);
 		scroller.addView(hscroller);
@@ -168,6 +174,7 @@ public class ResultActivityThree extends Activity {
 		savedInstanceState.putInt("SAVE_PERIOD_TIME",period_time);
 		savedInstanceState.putIntArray("SAVE_SPEEDS",speeds);
 		savedInstanceState.putInt("SAVE_COLOR",color);
+		savedInstanceState.putInt("SAVE_STEPS",steps);
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -204,6 +211,7 @@ public class ResultActivityThree extends Activity {
 		i.putExtra(PERIOD_TIME_MESSAGE, period_time);
 		i.putExtra(SPEEDS_MESSAGE, speeds);
 		i.putExtra(COLOR_MESSAGE, color);
+		i.putExtra(STEPS_MESSAGE, steps);
 		
 		startActivityForResult(i, QUIT_ALL);		
 

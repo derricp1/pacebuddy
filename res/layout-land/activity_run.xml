@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/lap_button"
                 android:layout_marginTop="20dp"
-                android:text="@string/0time"
+                android:text="@string/_0time"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="48sp" />
 
@@ -57,7 +57,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/finish_button"
                 android:layout_marginTop="20dp"
-                android:text="@string/0miles"
+                android:text="@string/_0miles"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="48sp" />
 
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_below="@+id/dist_text"
-                android:text="@string/0mph"
+                android:text="@string/_0mph"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="48sp" />
 	    

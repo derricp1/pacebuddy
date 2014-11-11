@@ -78,8 +78,8 @@ public class ResultsView extends View {
 		//additional info added
 
 		int finalptime = time;
-		while (finalptime > period_time) {
-			finalptime -= period_time;
+		while (finalptime > period_time/10) {
+			finalptime -= period_time/10;
 		}		
 		
 		//end of additional info
@@ -152,10 +152,10 @@ public class ResultsView extends View {
 			
 			for(int i=0;i<periods;i++) {
 				if (i == periods-1) {
-					canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+(dividedwidth*((float)finalptime/(float)period_time)), MAX_HEIGHT, redpaint);
+					canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+((((float)1/(float)periods)*((MAX_WIDTH-MIN_WIDTH)))*10*((float)finalptime/(float)period_time)), MAX_HEIGHT, redpaint);
 				}
 				else {
-					canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+dividedwidth, MAX_HEIGHT, redpaint);
+					canvas.drawRect(currstart, Math.min(MAX_HEIGHT-1,MAX_HEIGHT-((MAX_HEIGHT-MIN_HEIGHT)*(period_distances[i]/maxdistance))), currstart+((float)1/(float)periods)*((MAX_WIDTH-MIN_WIDTH)), MAX_HEIGHT, redpaint);
 				}
 				currstart += dividedwidth;
 			}

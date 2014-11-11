@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="42dp"
-                android:text="@string/0time"
+                android:text="@string/_0time"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="48sp" />
 
@@ -50,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="42dp"
-                android:text="@string/0miles"
+                android:text="@string/_0miles"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="48sp" />
 
@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="42dp"
-                android:text="@string/0mph"
+                android:text="@string/_0mph"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="48sp" />
 	    
