@@ -1,10 +1,15 @@
 package com.example.pacebuddy;
 import java.text.DecimalFormat;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.view.Surface;
 import android.view.View;
 
 public class ResultsView extends View {
@@ -26,6 +31,7 @@ public class ResultsView extends View {
 	int time;
 	int period_time;
 	int[] speeds;
+	int rotation;
 	
 	int TOTAL_HEIGHT;
 	int color;
@@ -42,8 +48,19 @@ public class ResultsView extends View {
 		super(context);
 	}
 	
+	@SuppressLint("DrawAllocation")
 	@Override
 	public void onDraw(Canvas canvas) {
+		
+		Drawable d = getResources().getDrawable(R.drawable.clouds);
+		Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+		
+		float scale = (float) height / (float) bitmap.getHeight();
+		if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)
+			scale = (float) width / (float) bitmap.getWidth();
+		
+		Bitmap scalemap = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth()*scale), (int)(bitmap.getHeight()*scale), false);
+		canvas.drawBitmap(scalemap, 0, 0, null);
 		
 		blackpaint.setTextSize(50);
 		blackpaint.setColor(Color.BLACK);
@@ -233,9 +250,11 @@ public class ResultsView extends View {
 		
 		}
 		
+		
+		
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int c, int pt, int[] spe) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int c, int pt, int[] spe, int rot) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -247,6 +266,8 @@ public class ResultsView extends View {
 		color = c;
 		period_time = pt;
 		speeds = spe;
+		
+		rotation = rot;
 		
 		MIN_HEIGHT = h/4;
 		MAX_HEIGHT = h/2;

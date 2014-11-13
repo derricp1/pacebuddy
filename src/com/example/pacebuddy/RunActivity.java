@@ -13,14 +13,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class RunActivity extends Activity implements SensorEventListener {
@@ -164,8 +169,11 @@ public class RunActivity extends Activity implements SensorEventListener {
 	TextView margintext;
 	//maxes out at 5 s
 	
+	TextView step_text;
+	
 	int steps;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -286,8 +294,28 @@ public class RunActivity extends Activity implements SensorEventListener {
 		
 		dist_text = (TextView) findViewById(R.id.dist_text);
 		margintext = (TextView) findViewById(R.id.margin_text);
+		step_text = (TextView) findViewById(R.id.step_text);
 		
 		timer.schedule(new updateTask(), 0, MS); //should be last
+		
+		 //scale
+		 Drawable d = getResources().getDrawable(R.drawable.clouds);
+		 Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+		 
+		 int height = getWindowManager().getDefaultDisplay().getHeight(); 
+		 int width = getWindowManager().getDefaultDisplay().getWidth(); 
+		 
+		 float factor = ( (float) height / (float) bitmap.getHeight() );
+		 if (getWindowManager().getDefaultDisplay().getRotation() == Surface.ROTATION_90 || getWindowManager().getDefaultDisplay().getRotation() == Surface.ROTATION_270) {
+			 factor = ( (float) width / (float) bitmap.getWidth() );
+		 }
+		 
+		 Bitmap scalemap = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth()*factor), (int)(bitmap.getHeight()*factor), false);
+		 
+		 ImageView img = (ImageView) findViewById(R.id.bg);
+		 //img.setMinimumHeight((int)(bitmap.getHeight()*factor));
+		 //img.setMinimumWidth((int)(bitmap.getWidth()*factor));
+		 img.setImageBitmap(scalemap);
 		
 	}
 
@@ -448,12 +476,15 @@ public class RunActivity extends Activity implements SensorEventListener {
 					margintext.setText("0.000 MPH");					
 				}
 				
+				step_text.setText(steps + " Steps");
+				
 			}
 			else {
 				time_text.setText("IN DELAY PERIOD");
 			}
 
 	        //tempview.setText(Float.toString(distance));
+			
 		}
 		
 	}

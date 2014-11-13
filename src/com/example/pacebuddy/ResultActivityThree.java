@@ -102,7 +102,7 @@ public class ResultActivityThree extends Activity {
 		HorizontalScrollView hscroller = new HorizontalScrollView(getApplicationContext());
 		
 		ResultsView3 rv = new ResultsView3(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds, sharedPref.getFloat(SPEED_1, 0), sharedPref.getFloat(SPEED_2, 0), sharedPref.getFloat(SPEED_3, 0), steps);
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds, sharedPref.getFloat(SPEED_1, 0), sharedPref.getFloat(SPEED_2, 0), sharedPref.getFloat(SPEED_3, 0), steps, getWindowManager().getDefaultDisplay().getRotation());
 		
 		hscroller.addView(rv);
 		scroller.addView(hscroller);

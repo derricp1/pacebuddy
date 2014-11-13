@@ -5,9 +5,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
+import android.widget.ImageView;
 
 public class ResultsActivity extends Activity {
 	
@@ -86,7 +91,7 @@ public class ResultsActivity extends Activity {
 		//rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width);
 		
 		ResultsView rv = new ResultsView(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, color, period_time, speeds);
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, color, period_time, speeds, getWindowManager().getDefaultDisplay().getRotation());
 		
 		//hv.addView(rv);
 		//sv.addView(hv);

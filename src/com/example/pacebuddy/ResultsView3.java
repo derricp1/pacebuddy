@@ -4,9 +4,13 @@ import java.text.DecimalFormat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.view.Surface;
 import android.view.View;
 
 public class ResultsView3 extends View {
@@ -32,6 +36,8 @@ public class ResultsView3 extends View {
 	
 	float imgheight;
 	
+	int rotation;
+	
 	int TOTAL_HEIGHT;
 	
 	float[] records;
@@ -49,6 +55,16 @@ public class ResultsView3 extends View {
 	@SuppressLint("DrawAllocation")
 	@Override
 	public void onDraw(Canvas canvas) {
+		
+		Drawable d = getResources().getDrawable(R.drawable.clouds);
+		Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+		
+		float scale = (float) height / (float) bitmap.getHeight();
+		if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)
+			scale = (float) width / (float) bitmap.getWidth();
+		
+		Bitmap scalemap = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth()*scale), (int)(bitmap.getHeight()*scale), false);
+		canvas.drawBitmap(scalemap, 0, 0, null);
 		
 		float maxspeed = 0;
 		int maxindex = 0;
@@ -146,7 +162,7 @@ public class ResultsView3 extends View {
 		canvas.drawText("Steps Taken: " + steps, 10, this_height + 400, blackpaint);
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp, float rec1, float rec2, float rec3, int s) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp, float rec1, float rec2, float rec3, int s, int rot) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -157,6 +173,8 @@ public class ResultsView3 extends View {
 		time = ti;
 		period_time = pti;
 		speeds = sp;
+		
+		rotation = rot;
 		
 		steps = s;
 		

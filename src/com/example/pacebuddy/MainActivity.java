@@ -8,9 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -64,6 +69,7 @@ public class MainActivity extends Activity {
 	
 	int autostop;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		 super.onCreate(savedInstanceState);
@@ -185,8 +191,28 @@ public class MainActivity extends Activity {
 		 min_speed_text.setText("Min Speed: " + min_speed + " MPH");
 		 max_speed_text.setText("Max Speed: " + max_speed + " MPH");
 		 
+		 
+		 //scale
+		 Drawable d = getResources().getDrawable(R.drawable.clouds);
+		 Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+		 
+		 int height = getWindowManager().getDefaultDisplay().getHeight(); 
+		 int width = getWindowManager().getDefaultDisplay().getWidth(); 
+		 
+		 float factor = ( (float) height / (float) bitmap.getHeight() );
+		 if (getWindowManager().getDefaultDisplay().getRotation() == Surface.ROTATION_90 || getWindowManager().getDefaultDisplay().getRotation() == Surface.ROTATION_270) {
+			 factor = ( (float) width / (float) bitmap.getWidth() );
+		 }
+		 
+		 Bitmap scalemap = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth()*factor), (int)(bitmap.getHeight()*factor), false);
+		 
+		 ImageView img = (ImageView) findViewById(R.id.bg);
+		 //img.setMinimumHeight((int)(bitmap.getHeight()*factor));
+		 //img.setMinimumWidth((int)(bitmap.getWidth()*factor));
+		 img.setImageBitmap(scalemap);
 	}
-	
+
+
 	public void BeginRun(View view) {
 		
 		if (max_speed < min_speed) {

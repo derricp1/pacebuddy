@@ -4,9 +4,13 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.view.Surface;
 import android.view.View;
 
 public class ResultsView2 extends View {
@@ -17,6 +21,8 @@ public class ResultsView2 extends View {
 	int MAX_WIDTH;
 	int MIN_LAP_HEIGHT;
 	int MAX_LAP_HEIGHT;
+	
+	int rotation;
 			
 	int periods;
 	float[] period_distances;
@@ -44,6 +50,16 @@ public class ResultsView2 extends View {
 	@SuppressLint("DrawAllocation")
 	@Override
 	public void onDraw(Canvas canvas) {
+		
+		Drawable d = getResources().getDrawable(R.drawable.clouds);
+		Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+		
+		float scale = (float) height / (float) bitmap.getHeight();
+		if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270)
+			scale = (float) width / (float) bitmap.getWidth();
+		
+		Bitmap scalemap = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth()*scale), (int)(bitmap.getHeight()*scale), false);
+		canvas.drawBitmap(scalemap, 0, 0, null);
 		
 		ArrayList<Integer> is_over = new ArrayList<Integer>();
 		ArrayList<Integer> is_under = new ArrayList<Integer>();
@@ -226,7 +242,7 @@ public class ResultsView2 extends View {
 		return ranges;
 	}
 	
-	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp) {
+	public void getData(int p, float[] pd, int l, float[] lt, float[] ld, int h, int w, int ti, int pti, int[] sp, int rot) {
 		periods = p;
 		period_distances = pd;
 		laps = l;
@@ -237,6 +253,8 @@ public class ResultsView2 extends View {
 		time = ti;
 		period_time = pti;
 		speeds = sp;
+		
+		rotation = rot;
 		
 		MIN_HEIGHT = h/4;
 		MAX_HEIGHT = h/2;

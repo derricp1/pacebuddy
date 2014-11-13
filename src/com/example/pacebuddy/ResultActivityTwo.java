@@ -84,7 +84,7 @@ public class ResultActivityTwo extends Activity {
 		}
 		
 		ResultsView2 rv = new ResultsView2(getApplicationContext());
-		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds);
+		rv.getData(periods, period_distances, laps, lap_times, lap_distances, height, width, time, period_time, speeds, getWindowManager().getDefaultDisplay().getRotation());
 		setContentView(rv);			
 	}
 
